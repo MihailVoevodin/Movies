@@ -37,6 +37,15 @@ function menu() {
             menuSide.classList.remove('active');
         }
     })
+
+    const menuItems = document.querySelectorAll('.hamburger-menu__item');
+
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+            menuSide.classList.remove('active');
+        })
+    })
+
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (menu);

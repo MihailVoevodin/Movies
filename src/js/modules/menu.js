@@ -26,6 +26,15 @@ function menu() {
             menuSide.classList.remove('active');
         }
     })
+
+    const menuItems = document.querySelectorAll('.hamburger-menu__item');
+
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+            menuSide.classList.remove('active');
+        })
+    })
+
 }
 
 export default menu;
