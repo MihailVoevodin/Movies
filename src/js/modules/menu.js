@@ -27,7 +27,7 @@ function menu() {
         }
     })
 
-    const menuItems = document.querySelectorAll('.hamburger-menu__item');
+    const menuItems = document.querySelectorAll('.hamburger-menu__link');
 
     menuItems.forEach(item => {
         item.addEventListener('click', () => {
