@@ -17349,19 +17349,20 @@ function select() {
         }
     }
 
-    function deleteFilm() {
-        const deleteBtns = document.querySelectorAll('.movie__close');
+    // И тут)
+    // Не уверен, что можно использовать после обновления в таком виде, 
+    // но это надо поменять инициализацию видимо
+    function deleteFilm(item) {
+        const filmId = item.getAttribute('filmid');
+        moviesStorage = JSON.parse(localStorage.getItem('movies'));
+        moviesStorage.filter((film, id) => {
 
-        deleteBtns.forEach((e, id) => {
-            e.addEventListener('click', (item) => {
-                item.target.parentNode.remove();
-                console.log(item.target);
-                moviesStorage = JSON.parse(localStorage.getItem('movies'));
+            if (film.filmId == filmId) {
                 moviesStorage.splice(id, 1);
-                console.log(id);
-                localStorage.setItem('movies', JSON.stringify(moviesStorage));
-            })
+            }
         })
+        console.log(filmId);
+        localStorage.setItem('movies', JSON.stringify(moviesStorage));
     }
     
     let moviesStorage = [];
@@ -17408,7 +17409,7 @@ function select() {
         loadFilms(url).then(onSuccess), 500);
 
 
-    const renderListFilm = filmData => {
+    const renderFilmInList = filmData => {
         const film = document.createElement('li');
         film.classList.add('film-item')
     
@@ -17429,19 +17430,27 @@ function select() {
         handleLoadFilms(api, (films) =>
             films.slice(0, 6).forEach((film) => {
                 
-            const filmListItem = renderListFilm(film);
+            const filmListItem = renderFilmInList(film);
             filmListItem.addEventListener('click', () => {
                 handleListItemClick(film);
-                // deleteFilm();
-
             });
-            console.log(filmListItem);
+            
         }));
     });
 
     const handleListItemClick = (filmData) => {
 
         const filmCard = renderFilmCard(filmData);
+        const deleteBtn = filmCard.querySelector('.movie__close');
+
+        //Смотреть здесь)
+
+        deleteBtn.addEventListener('click', () => {
+            filmCard.remove();
+            
+            deleteFilm(filmCard);
+        })
+        console.log(deleteBtn);
 
         // listFilms.innerHTML = '';
         // selectItem.value = '';
@@ -17471,9 +17480,6 @@ function select() {
         return movie;
     }
 
-    renderClose();
-    deleteFilm();
-             
 
     window.addEventListener('click', (e) => {
         if (listFilms && !e.target.closest('.film')) {
