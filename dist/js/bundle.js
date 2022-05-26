@@ -17305,40 +17305,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
 
 
+
+const API_KEY = 'ba2becc0-f421-4ef5-bf44-ebac95a88660';
+const apiMyFilm = 'https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=';
+
+const store = {
+    moviesStorage: []
+}
+
 function select() {
-
-    
-
-    const _apiKey = 'ba2becc0-f421-4ef5-bf44-ebac95a88660';
-    const apiMyFilm = 'https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=';
 
     const selectItem = document.querySelector('.film');
     const listFilms = document.querySelector('.my-list__select');
     const inputClose = document.querySelector('.new-film__close');
-    const movies = document.querySelector('.my-list__items');
-          
+    
+    FilmActions.initializeState();      
+    
+    const RenderInstance = new RenderUtil();
 
-    function getRatingColor(rate) {
-        if (rate === 'null') {
-            return 'grey';
-        } else if (rate >= '7') {
-            return 'green';
-        } else if (rate >= '4') {
-            return 'orange';
-        } else {
-            return 'red';
-        }
-    }
+    RenderInstance.render();
 
-    function getRating(rate) {
-        if (rate.includes('%')) {
-            return [rate.substr(0, 1), rate.substr(1, 1)].join('.')
-        } else {
-            return rate
-        }
-    }
 
-    function renderClose() {
+            function renderClose() {
         if (listFilms.textContent != '') {
             inputClose.style.display = 'block';
             
@@ -17348,55 +17336,11 @@ function select() {
             selectItem.value = '';
         }
     }
-
-    // И тут)
-    // Не уверен, что можно использовать после обновления в таком виде, 
-    // но это надо поменять инициализацию видимо
-    function deleteFilm(item) {
-        const filmId = item.getAttribute('filmid');
-        moviesStorage = JSON.parse(localStorage.getItem('movies'));
-        moviesStorage.filter((film, id) => {
-
-            if (film.filmId == filmId) {
-                moviesStorage.splice(id, 1);
-            }
-        })
-        console.log(filmId);
-        localStorage.setItem('movies', JSON.stringify(moviesStorage));
-    }
-    
-    let moviesStorage = [];
-
-    if (localStorage.getItem('movies')) {
-        moviesStorage = JSON.parse(localStorage.getItem('movies'));
-        let displayFilm = '';
-        moviesStorage.forEach(item => {
-            console.log(item);
-            
-            displayFilm += `
-            <li class='movie' filmId=${item.filmId}>
-                <img src="${item.posterUrl}" alt="${item.nameEn}">
-                <div class="movie__name movie__nameEn">${item.nameEn ? item.nameEn : ''}</div>
-                <div class="movie__name movie__nameRu">${item.nameEn ? '( ' + item.nameRu + ' )' : item.nameRu}</div>
-                <div class="movie__genres">${item.genres.slice(0, 3).map(genre => ` ${genre.genre}`)}</div>
-                <div class="movie__rating movie__rating_${getRatingColor(item.rating)}">${item.rating != 'null' ? getRating(item.rating) : 'no'}</div>
-                <div class="movie__close">Удалить</div>
-                <div class="movie__info">Подробнее...</div>
-            </li>
-            `
-
-            movies.innerHTML = displayFilm;
-        })
-    }
-
-
-
-
     
     const loadFilms = async (url) => {
         const headers = {
             'Content-type': 'application/json',
-            'X-API-KEY': _apiKey,
+            'X-API-KEY': API_KEY,
         };
 
         const response = await fetch(url, {headers});
@@ -17418,6 +17362,8 @@ function select() {
         `
         listFilms.appendChild(film);
 
+        renderClose();
+
         return film;
     }
     
@@ -17426,6 +17372,8 @@ function select() {
               api = `${apiMyFilm}${inputValue}`;
               
         listFilms.innerHTML = '';
+
+        
 
         handleLoadFilms(api, (films) =>
             films.slice(0, 6).forEach((film) => {
@@ -17440,28 +17388,94 @@ function select() {
 
     const handleListItemClick = (filmData) => {
 
-        const filmCard = renderFilmCard(filmData);
-        const deleteBtn = filmCard.querySelector('.movie__close');
+        const RenderInstance = new RenderUtil();
 
-        //Смотреть здесь)
-
-        deleteBtn.addEventListener('click', () => {
-            filmCard.remove();
-            
-            deleteFilm(filmCard);
-        })
-        console.log(deleteBtn);
-
-        // listFilms.innerHTML = '';
-        // selectItem.value = '';
-
-        moviesStorage.push(filmData);
-        console.log(moviesStorage);
-        localStorage.setItem('movies', JSON.stringify(moviesStorage));
+        FilmActions.addFilm(filmData);
+        RenderInstance.render();
     }
 
-    const renderFilmCard = (filmData) => {
+    window.addEventListener('click', (e) => {
+        if (listFilms && !e.target.closest('.film')) {
+            listFilms.innerHTML = '';
+            selectItem.value = '';
+        }
+    })
+
+}
+
+class FilmActions {
+    static initializeState() {
+        store.moviesStorage = JSON.parse(localStorage.getItem('movies'));
+    }
+    static addFilm(filmData) {
+        store.moviesStorage.push(filmData);
+        localStorage.setItem('movies', JSON.stringify(store.moviesStorage));
+    }
+    static removeFilm(filmId) {
+        const filteredFilms = store.moviesStorage.filter((item) => item.filmId !== filmId);
+
+        store.moviesStorage = filteredFilms;
+        localStorage.setItem('movies', JSON.stringify(filteredFilms));
+    }
+    //добавил
+    static openInfo(container) {
+        container.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+
+class RenderUtil {
+    moviesContainer = document.querySelector('.my-list__items');
+    cardsContainer = document.querySelector('.cards');
+
+    handleDeleteClick(filmId) {
+        FilmActions.removeFilm(filmId);
+        this.render();
+    }
+    //добавил
+    handleInfoClick(filmData) {
+        FilmActions.openInfo(this.cardsContainer);
+        this.renderInfoCard(filmData)
+    }
+    //добавил
+    handleDeleteInfoClick(card) {
+            card.remove();
+            this.cardsContainer.style.display = 'none';
+            document.body.style.overflow = '';
+    }
+    //добавил
+    renderInfoCard(filmData) {
+        const card = document.createElement('div');
+
+        card.classList.add('card')
+        card.innerHTML = `
+            <img class="card__img" src="${filmData.posterUrl}" alt="${filmData.nameEn}">
+            <div class="card__info">
+                <div class="card__name">${filmData.nameEn ? filmData.nameEn : ''} ${filmData.nameEn ? '(' + filmData.nameRu +')' : filmData.nameRu}</div>
+                <div class="card__type">Type : ${filmData.type}</div>
+                <div class="card__year">Year : ${filmData.year}</div>
+                <div class="card__countries">Countries : ${filmData.countries.map(countries => ` ${countries.country}`)}</div>
+                <div class="card__genres">Genres :${filmData.genres.map(genre => ` ${genre.genre}`)}</div>
+                <div class="card__rating">Rating : ${filmData.rating}</div>
+                <div class="card__length">Length : ${filmData.filmLength}</div>
+                <div class="card__descr">Description :<br>${filmData.description}</div>
+                <div class="card__close">Закрыть</div>
+            </div>
+            
+        `
+        this.cardsContainer.appendChild(card);
+        
+        const closeInfo = card.querySelector('.card__close');
+
+        closeInfo.addEventListener('click', () => this.handleDeleteInfoClick(card));
+
+        return card;
+    }
+
+    renderFilmCard(filmData) {
         const movie = document.createElement('li');
+        
 
         movie.setAttribute('filmId', filmData.filmId);
         movie.classList.add('movie');
@@ -17471,98 +17485,52 @@ function select() {
             <div class="movie__name movie__nameEn">${filmData.nameEn ? filmData.nameEn : ''}</div>
             <div class="movie__name movie__nameRu">${filmData.nameEn ? '( ' + filmData.nameRu + ' )' : filmData.nameRu}</div>
             <div class="movie__genres">${filmData.genres.slice(0, 3).map(genre => ` ${genre.genre}`)}</div>
-            <div class="movie__rating movie__rating_${getRatingColor(filmData.rating)}">${filmData.rating != 'null' ? getRating(filmData.rating) : 'no'}</div>
+            <div class="movie__rating movie__rating_${Helpers.getRatingColor(filmData.rating)}">${filmData.rating != 'null' ? Helpers.getRating(filmData.rating) : 'no'}</div>
             <div class="movie__close">Удалить</div>
             <div class="movie__info">Подробнее...</div>
         `
-        movies.appendChild(movie);
+        this.moviesContainer.appendChild(movie);
 
         return movie;
     }
 
+    render() {
+        this.moviesContainer.innerHTML = '';
+        store.moviesStorage.forEach((filmData) => {
+            const filmCard = this.renderFilmCard(filmData);
+            const deleteBtn = filmCard.querySelector('.movie__close');
+            const infoBtn = filmCard.querySelector('.movie__info');
 
-    window.addEventListener('click', (e) => {
-        if (listFilms && !e.target.closest('.film')) {
-            listFilms.innerHTML = '';
-            selectItem.value = '';
+            deleteBtn.addEventListener('click', () => this.handleDeleteClick(filmData.filmId));
+            infoBtn.addEventListener('click', () => this.handleInfoClick(filmData))
+        })
+    }
+}
+
+class Helpers {
+
+    static getRatingColor(rate) {
+        if (rate === 'null') {
+            return 'grey';
+        } else if (rate >= '7') {
+            return 'green';
+        } else if (rate >= '4') {
+            return 'orange';
+        } else {
+            return 'red';
         }
-    })
+    }
 
-    //     closeInput()
-    //     console.log(movies);
-    //     deleteFilm()
-
-
-    // }
-    
-    // deleteFilm()
-
-    // function closeCard() {
-        
-    //     cards.addEventListener('click', (e) => {
-    //         console.log(e.target);
-    //         if (!e.target.closest('.card')) {
-                
-    //             cards.innerHTML = '';
-
-    //             cards.style.display = 'none';
-    //             document.body.style.overflow = '';
-    //         }
-            
-
-    //     })
-    // }
-
-
-    // function createCard() {
-
-    //     const cardTriggers = document.querySelectorAll('.movie__info');
-
-    //     cardTriggers.forEach(e => {
-            
-    //         const filmId = e.parentNode.getAttribute('filmid');
-                
-    //         e.addEventListener('click', () => {
-    //             console.log(filmId);
-    //             moviesStorage = JSON.parse(localStorage.getItem('movies'));
-    //             moviesStorage.forEach(item => {
-                    
-    //                 if (item.filmId == filmId) {
-    //                     console.log(item)
-    //                     const card = document.createElement('div');
-    //                     cards.style.display = 'block';
-    //                     card.classList.add('card')
-    //                     card.innerHTML = `
-    //                         <img class="card__img" src="${item.posterUrl}" alt="${item.nameEn}">
-    //                         <div class="card__info">
-    //                             <div class="card__name">${item.nameEn ? item.nameEn : ''} ${item.nameEn ? '(' + item.nameRu +')' : item.nameRu}</div>
-    //                             <div class="card__type">Type : ${item.type}</div>
-    //                             <div class="card__year">Year : ${item.year}</div>
-    //                             <div class="card__countries">Countries : ${item.countries.map(countries => ` ${countries.country}`)}</div>
-    //                             <div class="card__genres">Genres :${item.genres.map(genre => ` ${genre.genre}`)}</div>
-    //                             <div class="card__rating">Rating : ${item.rating}</div>
-    //                             <div class="card__length">Length : ${item.filmLength}</div>
-    //                             <div class="card__descr">Description :<br>${item.description}</div>
-    //                         </div>
-                            
-    //                     `
-    //                     cards.appendChild(card);
-    //                     document.body.style.overflow = 'hidden';
-    //                     console.log(card);
-    //                     closeCard()
-    //                 }
-                    
-    //             })
-                    
-    //         })
-    //     })
-
-    // }
-
+    static getRating(rate) {
+        if (rate.includes('%')) {
+            return [rate.substr(0, 1), rate.substr(1, 1)].join('.')
+        } else {
+            return rate
+        }
+    }
     
 
-    // createCard()
-    
+
 
     
     
