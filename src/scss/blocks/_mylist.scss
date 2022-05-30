@@ -64,11 +64,11 @@
 .card {
     font-size: 14px;
     display: flex;
-    cursor: pointer;
     max-width: 600px;
     margin: 250px auto;
     padding: auto;
     background-color: #000;
+    position: relative;
     &__img {
         width: 50%;
         height: 100%;
@@ -76,11 +76,17 @@
     &__info {
         padding: 20px 10px 20px 20px;
         div {
-            padding-top: 10px;
+            padding-top: 8px;
         }
         div:first-child {
             padding: 0;
         }
     }
-    
+    &__close {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        right: 10px;
+        
+    }
 }

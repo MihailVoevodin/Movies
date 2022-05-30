@@ -26,6 +26,9 @@
         &__close, &__info {
             font-size: 14px;
         }
+        &__info {
+            top: 210px
+        }
     }
     .my-list {
         &__wrapper {
@@ -47,6 +50,19 @@
             top: 33px;
         }
     }
+    .card {
+        margin: 150px auto;
+    }
+}
+
+@media (max-height: 900px) {
+    .card {
+        font-size: 12px;
+        margin: 110px auto;
+        &__img {
+            width: 30%;
+        }
+    }
 }
 
 @media (max-height: 700px) {
@@ -58,6 +74,47 @@
             font-size: 40px;
             line-height: 50px;
         }
+    }
+}
+
+@media (max-height: 500px) {
+    .card {
+        font-size: 10px;
+        margin: 30px auto;
+        line-height: 12px;
+        &__info {
+            padding: 5px;
+            div {
+                padding-top: 2px;
+                :last-child {
+                margin-top: 8px;
+                }
+            }
+        }
+    }
+}
+@media (max-width: 700px) {
+    .card {
+        font-size: 10px;
+        display: block;
+        &__img {
+            padding-right: 10px;
+            float: left;
+            width: 30%;
+        }
+        &__info {
+            padding: 10px;
+            div {
+                padding-top: 2px;
+            }
+        }
+    }
+}
+
+@media (max-width: 620px) {
+    .card {
+        margin-right: 10px;
+        margin-left: 10px;
     }
 }
 
