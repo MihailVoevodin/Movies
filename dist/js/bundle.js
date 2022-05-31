@@ -17313,6 +17313,11 @@ const store = {
     moviesStorage: []
 }
 
+if (!localStorage.getItem('movies')) {
+    localStorage.setItem('movies', JSON.stringify(store.moviesStorage));
+}
+
+
 function select() {
 
     const selectItem = document.querySelector('.film');
@@ -17320,7 +17325,7 @@ function select() {
     const inputClose = document.querySelector('.new-film__close');
     
     FilmActions.initializeState();      
-    
+
     const RenderInstance = new RenderUtil();
 
     RenderInstance.render();
@@ -17497,6 +17502,8 @@ class RenderUtil {
     }
 
     render() {
+        // debugger
+        
         this.moviesContainer.innerHTML = '';
         store.moviesStorage.forEach((filmData) => {
             const filmCard = this.renderFilmCard(filmData);
