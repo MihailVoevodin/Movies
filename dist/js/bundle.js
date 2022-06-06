@@ -17323,7 +17323,7 @@ function select() {
     const selectItem = document.querySelector('.film');
     const listFilms = document.querySelector('.my-list__select');
     const inputClose = document.querySelector('.new-film__close');
-    
+    const pullRequest = null;
     FilmActions.initializeState();      
 
     const RenderInstance = new RenderUtil();
@@ -17537,13 +17537,6 @@ class Helpers {
             return rate
         }
     }
-    
-
-
-
-    
-    
-    
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (select);

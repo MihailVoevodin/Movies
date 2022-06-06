@@ -18,7 +18,8 @@ function select() {
     const selectItem = document.querySelector('.film');
     const listFilms = document.querySelector('.my-list__select');
     const inputClose = document.querySelector('.new-film__close');
-    
+    const pullRequest = 0;
+    const request = null;
     FilmActions.initializeState();      
 
     const RenderInstance = new RenderUtil();
@@ -232,13 +233,6 @@ class Helpers {
             return rate
         }
     }
-    
-
-
-
-    
-    
-    
 }
 
 export default select;
