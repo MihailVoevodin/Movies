@@ -17213,6 +17213,34 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 
+/***/ "./src/js/FilmService.js":
+/*!*******************************!*\
+  !*** ./src/js/FilmService.js ***!
+  \*******************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "loadFilms": function() { return /* binding */ loadFilms; }
+/* harmony export */ });
+const API_KEY = 'ba2becc0-f421-4ef5-bf44-ebac95a88660';
+ 
+async function loadFilms(url){
+    const headers = {
+        'Content-type': 'application/json',
+        'X-API-KEY': API_KEY,
+    };
+
+    const response = await fetch(url, {headers});
+    const resultData = await response.json();
+    
+    return resultData.films || []; 
+};
+
+
+/***/ }),
+
 /***/ "./src/js/modules/menu.js":
 /*!********************************!*\
   !*** ./src/js/modules/menu.js ***!
@@ -17303,109 +17331,70 @@ function scroll() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _FilmService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../FilmService */ "./src/js/FilmService.js");
 
 
 
-const API_KEY = 'ba2becc0-f421-4ef5-bf44-ebac95a88660';
+
 const apiMyFilm = 'https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=';
 
 const store = {
-    moviesStorage: []
+    moviesStorage: [],
+    loadedFilms: [],
+    detailsInfo: null,
+    inputValue: null,
 }
 
 if (!localStorage.getItem('movies')) {
     localStorage.setItem('movies', JSON.stringify(store.moviesStorage));
 }
 
-
 function select() {
 
     const selectItem = document.querySelector('.film');
     const listFilms = document.querySelector('.my-list__select');
     const inputClose = document.querySelector('.new-film__close');
-    const pullRequest = null;
+    const pullRequest = 0;
+    const request = null;
+
     FilmActions.initializeState();      
 
     const RenderInstance = new RenderUtil();
 
     RenderInstance.render();
 
-
-            function renderClose() {
-        if (listFilms.textContent != '') {
-            inputClose.style.display = 'block';
-            
-        } else {
-            inputClose.style.display = 'none';
-            listFilms.innerHTML = '';
-            selectItem.value = '';
-        }
-    }
-    
-    const loadFilms = async (url) => {
-        const headers = {
-            'Content-type': 'application/json',
-            'X-API-KEY': API_KEY,
-        };
-
-        const response = await fetch(url, {headers});
-        const resultData = await response.json();
-        
-        return resultData.films || []; 
-    };
+//перенес запрос в отдельный файл 
 
     const handleLoadFilms = (0,lodash__WEBPACK_IMPORTED_MODULE_0__.debounce)((url, onSuccess) => 
-        loadFilms(url).then(onSuccess), 500);
+        (0,_FilmService__WEBPACK_IMPORTED_MODULE_1__.loadFilms)(url).then(onSuccess), 500);
 
-
-    const renderFilmInList = filmData => {
-        const film = document.createElement('li');
-        film.classList.add('film-item')
-    
-        film.innerHTML = `
-            ${filmData.nameRu}  
-        `
-        listFilms.appendChild(film);
-
-        renderClose();
-
-        return film;
-    }
+//удалил RenderFilmInList
     
     selectItem.addEventListener('keyup', () => {
-        const inputValue = selectItem.value,
-              api = `${apiMyFilm}${inputValue}`;
+        store.inputValue = selectItem.value;
+        const  api = `${apiMyFilm}${store.inputValue}`;
               
         listFilms.innerHTML = '';
 
-        
-
-        handleLoadFilms(api, (films) =>
-            films.slice(0, 6).forEach((film) => {
-                
-            const filmListItem = renderFilmInList(film);
-            filmListItem.addEventListener('click', () => {
-                handleListItemClick(film);
+        handleLoadFilms(api, (films) => {
+            store.loadedFilms = films;
+            console.log(store.loadedFilms);
+            store.loadedFilms.forEach((film) => {
+                //перенес функционал в эту функцию весь
+                RenderInstance.renderSelectFilmsField(listFilms, inputClose, selectItem, film);
             });
-            
-        }));
+        });
     });
+    //заменил эту функцию, перенес всё в одну
+    // const handleListItemClick = (filmData) => {
 
-    const handleListItemClick = (filmData) => {
+    //     const RenderInstance = new RenderUtil();
 
-        const RenderInstance = new RenderUtil();
+    //     FilmActions.addFilm(filmData);
+    //     RenderInstance.render();
+    // }
 
-        FilmActions.addFilm(filmData);
-        RenderInstance.render();
-    }
-
-    window.addEventListener('click', (e) => {
-        if (listFilms && !e.target.closest('.film')) {
-            listFilms.innerHTML = '';
-            selectItem.value = '';
-        }
-    })
-
+    //удалил обработчик на window
 }
 
 class FilmActions {
@@ -17422,35 +17411,83 @@ class FilmActions {
         store.moviesStorage = filteredFilms;
         localStorage.setItem('movies', JSON.stringify(filteredFilms));
     }
+    static addSelectFilms(films) {
+        store.loadedFilms = films;
+    }
+    //исправил
+    static addDetailsInfo(filmData) {
+        store.detailsInfo = filmData;
+    }
     //добавил
-    static openInfo(container) {
-        container.style.display = 'block';
-        document.body.style.overflow = 'hidden';
+    static deleteDetailsInfo(card) {
+        store.detailsInfo = null;
+        card.remove();
     }
 }
 
-
 class RenderUtil {
     moviesContainer = document.querySelector('.my-list__items');
-    cardsContainer = document.querySelector('.cards');
+    modalContainer = document.querySelector('.modal__container');
+
+    //Функция из renderClose and RenderFilmInList
+    renderSelectFilmsField(listFilms, inputClose, selectItem, filmData) {
+        const film = document.createElement('li');
+        film.classList.add('film-item')
+    
+        film.innerHTML = `
+            ${filmData.nameRu}  
+        `;
+
+        listFilms.appendChild(film);
+
+        film.addEventListener('click', () => {
+            FilmActions.addFilm(filmData);
+            this.render();
+            store.inputValue = null;
+        });
+
+        if (selectItem.value != '') {
+            inputClose.style.display = 'block';
+        }
+
+        film.addEventListener('click', () => {
+            this.closeSelectFilmsField(listFilms, inputClose, selectItem);
+            console.log(store.loadedFilms);
+        })
+        inputClose.addEventListener('click', () => {
+            //при нажатии на крест почему-то в консоли много выводов происходит
+            this.closeSelectFilmsField(listFilms, inputClose, selectItem);
+            console.log(store.loadedFilms);
+        })
+        
+        return film;
+    }
+    //функция на закрытие селекта
+    closeSelectFilmsField(listFilms, inputClose, selectItem) {
+        inputClose.style.display = 'none';
+        listFilms.innerHTML = '';
+        selectItem.value = '';
+        store.inputValue = null;
+        store.loadedFilms = [];
+    }
 
     handleDeleteClick(filmId) {
         FilmActions.removeFilm(filmId);
         this.render();
     }
-    //добавил
-    handleInfoClick(filmData) {
-        FilmActions.openInfo(this.cardsContainer);
-        this.renderInfoCard(filmData)
+    //добавил upd исправил
+    handleDetailsInfoClick(filmData) {
+        FilmActions.addDetailsInfo(filmData);
+        this.render();
     }
-    //добавил
+    //добавил upd исправил
     handleDeleteInfoClick(card) {
-        card.remove();
-        this.cardsContainer.style.display = 'none';
+        FilmActions.deleteDetailsInfo(card);
+        this.modalContainer.style.display = 'none';
         document.body.style.overflow = '';
     }
-    //добавил
-    renderInfoCard(filmData) {
+
+    renderDetailsInfoModal(filmData) {
         const card = document.createElement('div');
 
         card.classList.add('card')
@@ -17471,11 +17508,15 @@ class RenderUtil {
             </div>
             
         `
-        this.cardsContainer.appendChild(card);
-        
-        const closeInfo = card.querySelector('.card__close');
+        this.modalContainer.appendChild(card);
 
-        closeInfo.addEventListener('click', () => this.handleDeleteInfoClick(card));
+        //перенес работу с версткой
+        this.modalContainer.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        
+        const closeBtn = card.querySelector('.card__close'); //поменял название
+
+        closeBtn.addEventListener('click', () => this.handleDeleteInfoClick(card));
 
         return card;
     }
@@ -17483,7 +17524,6 @@ class RenderUtil {
     renderFilmCard(filmData) {
         const movie = document.createElement('li');
         
-
         movie.setAttribute('filmId', filmData.filmId);
         movie.classList.add('movie');
 
@@ -17498,21 +17538,26 @@ class RenderUtil {
         `
         this.moviesContainer.appendChild(movie);
 
+        const deleteBtn = movie.querySelector('.movie__close');
+        const infoBtn = movie.querySelector('.movie__info');
+
+        deleteBtn.addEventListener('click', () => this.handleDeleteClick(filmData.filmId));
+        infoBtn.addEventListener('click', () => this.handleDetailsInfoClick(filmData));
+
         return movie;
     }
 
     render() {
         // debugger
-        
         this.moviesContainer.innerHTML = '';
         store.moviesStorage.forEach((filmData) => {
-            const filmCard = this.renderFilmCard(filmData);
-            const deleteBtn = filmCard.querySelector('.movie__close');
-            const infoBtn = filmCard.querySelector('.movie__info');
-
-            deleteBtn.addEventListener('click', () => this.handleDeleteClick(filmData.filmId));
-            infoBtn.addEventListener('click', () => this.handleInfoClick(filmData))
+            this.renderFilmCard(filmData);
+            //перенес слушатели в их функцию
         })
+        if (store.detailsInfo) {
+            this.renderDetailsInfoModal(store.detailsInfo);
+        }
+        
     }
 }
 
