@@ -17222,8 +17222,12 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "loadFilms": function() { return /* binding */ loadFilms; }
+/* harmony export */   "selectLoadFilms": function() { return /* binding */ selectLoadFilms; }
 /* harmony export */ });
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+
+
 const API_KEY = 'ba2becc0-f421-4ef5-bf44-ebac95a88660';
  
 async function loadFilms(url){
@@ -17237,6 +17241,9 @@ async function loadFilms(url){
     
     return resultData.films || []; 
 };
+
+const selectLoadFilms = (0,lodash__WEBPACK_IMPORTED_MODULE_0__.debounce)((url, onSuccess) => 
+loadFilms(url).then(onSuccess), 500);
 
 
 /***/ }),
@@ -17342,67 +17349,26 @@ const store = {
     moviesStorage: [],
     loadedFilms: [],
     detailsInfo: null,
-    inputValue: null,
-}
-
-if (!localStorage.getItem('movies')) {
-    localStorage.setItem('movies', JSON.stringify(store.moviesStorage));
+    selectFilmInputValue: null,
 }
 
 function select() {
-
-    const selectItem = document.querySelector('.film');
-    const listFilms = document.querySelector('.my-list__select');
-    const inputClose = document.querySelector('.new-film__close');
-    const pullRequest = 0;
-    const request = null;
-
     FilmActions.initializeState();      
 
     const RenderInstance = new RenderUtil();
 
     RenderInstance.render();
 
-//перенес запрос в отдельный файл 
-
-    const handleLoadFilms = (0,lodash__WEBPACK_IMPORTED_MODULE_0__.debounce)((url, onSuccess) => 
-        (0,_FilmService__WEBPACK_IMPORTED_MODULE_1__.loadFilms)(url).then(onSuccess), 500);
-
-//удалил RenderFilmInList
-    
-    selectItem.addEventListener('keyup', () => {
-        store.inputValue = selectItem.value;
-        const  api = `${apiMyFilm}${store.inputValue}`;
-              
-        listFilms.innerHTML = '';
-
-        handleLoadFilms(api, (films) => {
-            store.loadedFilms = films;
-            console.log(store.loadedFilms);
-            store.loadedFilms.forEach((film) => {
-                //перенес функционал в эту функцию весь
-                RenderInstance.renderSelectFilmsField(listFilms, inputClose, selectItem, film);
-            });
-        });
-    });
-    //заменил эту функцию, перенес всё в одну
-    // const handleListItemClick = (filmData) => {
-
-    //     const RenderInstance = new RenderUtil();
-
-    //     FilmActions.addFilm(filmData);
-    //     RenderInstance.render();
-    // }
-
-    //удалил обработчик на window
+    RenderInstance.renderSelectInput();
 }
 
 class FilmActions {
     static initializeState() {
-        store.moviesStorage = JSON.parse(localStorage.getItem('movies'));
+        store.moviesStorage = JSON.parse(localStorage.getItem('movies')) || [];
     }
     static addFilm(filmData) {
         store.moviesStorage.push(filmData);
+        store.selectFilmInputValue = null;
         localStorage.setItem('movies', JSON.stringify(store.moviesStorage));
     }
     static removeFilm(filmId) {
@@ -17414,23 +17380,36 @@ class FilmActions {
     static addSelectFilms(films) {
         store.loadedFilms = films;
     }
-    //исправил
-    static addDetailsInfo(filmData) {
+    static addDetailsModal(filmData) {
         store.detailsInfo = filmData;
+        store.loadedFilms = [];
     }
-    //добавил
-    static deleteDetailsInfo(card) {
+    static deleteDetailsModal() {
         store.detailsInfo = null;
-        card.remove();
+    }
+    static selectFilmInputValue(selectItem) {
+        store.selectFilmInputValue = selectItem.value;
+    }
+    static setLoadedFilms(films) {
+        store.loadedFilms = films;
+    }
+    static closeSelectFilms() {
+        store.selectFilmInputValue = null;
+        store.loadedFilms = [];
     }
 }
 
 class RenderUtil {
     moviesContainer = document.querySelector('.my-list__items');
     modalContainer = document.querySelector('.modal__container');
+    selectContainer = document.querySelector('.select');
 
-    //Функция из renderClose and RenderFilmInList
-    renderSelectFilmsField(listFilms, inputClose, selectItem, filmData) {
+
+
+    renderSelectFilm(filmData) {
+        const listFilms = Helpers.getSelectList();
+        const selectItem = Helpers.getSelectInput();
+        const inputClose = Helpers.getSelectClose();
         const film = document.createElement('li');
         film.classList.add('film-item')
     
@@ -17442,83 +17421,128 @@ class RenderUtil {
 
         film.addEventListener('click', () => {
             FilmActions.addFilm(filmData);
+            this.closeSelectFilmsField(listFilms, inputClose, selectItem);
             this.render();
-            store.inputValue = null;
         });
 
         if (selectItem.value != '') {
             inputClose.style.display = 'block';
         }
 
-        film.addEventListener('click', () => {
+        inputClose.addEventListener('click', (event) => {
+            event.stopImmediatePropagation()
             this.closeSelectFilmsField(listFilms, inputClose, selectItem);
-            console.log(store.loadedFilms);
         })
-        inputClose.addEventListener('click', () => {
-            //при нажатии на крест почему-то в консоли много выводов происходит
-            this.closeSelectFilmsField(listFilms, inputClose, selectItem);
-            console.log(store.loadedFilms);
-        })
-        
+
         return film;
     }
-    //функция на закрытие селекта
+
+    renderSelectInput() {
+        const selectInputField = document.createElement('div');
+
+        selectInputField.classList.add('new-film');
+
+        selectInputField.innerHTML = `
+            <input type="text" class="film" placeholder="Введите название фильма">
+            <div class="new-film__close">
+                <svg width="10" height="10" viewBox="0 0 29 30"     fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.1568 14.5231L28.4489 3.23075C29.1837 2.49623 29.1837 1.30861 28.4489 0.574085C27.7144 -0.160437 26.5267 -0.160437 25.7922 0.574085L14.4998 11.8665L3.20781 0.574085C2.47295 -0.160437 1.28567 -0.160437 0.551149 0.574085C-0.183716 1.30861 -0.183716 2.49623 0.551149 3.23075L11.8432 14.5231L0.551149 25.8155C-0.183716 26.55 -0.183716 27.7376 0.551149 28.4721C0.917206 28.8385 1.39852 29.0226 1.87948 29.0226C2.36045 29.0226 2.84141 28.8385 3.20781 28.4721L14.4998 17.1798L25.7922 28.4721C26.1586 28.8385 26.6396 29.0226 27.1205 29.0226C27.6015 29.0226 28.0825 28.8385 28.4489 28.4721C29.1837 27.7376 29.1837 26.55 28.4489 25.8155L17.1568 14.5231Z" fill="black"/>
+                </svg>
+            </div>
+            <div class="my-list__wrapper">
+                <ul class="my-list__select">
+
+                </ul>
+            </div>
+        `;
+
+        this.selectContainer.appendChild(selectInputField);
+        const listFilms = document.querySelector('.my-list__select');
+        const selectItem = document.querySelector('.film');
+
+        selectItem.addEventListener('keyup', () => {
+            FilmActions.selectFilmInputValue(selectItem);
+            const  apiUrl = `${apiMyFilm}${store.selectFilmInputValue}`;
+                  
+            listFilms.innerHTML = '';
+    
+            (0,_FilmService__WEBPACK_IMPORTED_MODULE_1__.selectLoadFilms)(apiUrl, (films) => {
+                FilmActions.setLoadedFilms(films);
+                console.log(store.loadedFilms);
+                this.render();
+            });
+        });
+
+        return listFilms;
+    }
+
+    renderSelectFilmsField() {
+        const filmsForSelect = store.loadedFilms.filter((item) => {
+            return !(0,lodash__WEBPACK_IMPORTED_MODULE_0__.some)(store.moviesStorage, {filmId: item.filmId})
+        })
+        filmsForSelect.forEach((film) => {
+            this.renderSelectFilm(film);
+        });
+    };
+
     closeSelectFilmsField(listFilms, inputClose, selectItem) {
+        FilmActions.closeSelectFilms();
         inputClose.style.display = 'none';
         listFilms.innerHTML = '';
         selectItem.value = '';
-        store.inputValue = null;
-        store.loadedFilms = [];
-    }
+    };
 
     handleDeleteClick(filmId) {
         FilmActions.removeFilm(filmId);
         this.render();
-    }
-    //добавил upd исправил
-    handleDetailsInfoClick(filmData) {
-        FilmActions.addDetailsInfo(filmData);
+    };
+    handleDetailsModalClick(filmData) {
+        FilmActions.addDetailsModal(filmData);
         this.render();
-    }
-    //добавил upd исправил
-    handleDeleteInfoClick(card) {
-        FilmActions.deleteDetailsInfo(card);
+    };
+    handleDeleteModalClick(modal) {
+        FilmActions.deleteDetailsModal();
+        modal.remove();
         this.modalContainer.style.display = 'none';
         document.body.style.overflow = '';
     }
 
-    renderDetailsInfoModal(filmData) {
-        const card = document.createElement('div');
+    renderDetailsModal(filmData) {
+        const modal = document.createElement('div');
 
-        card.classList.add('card')
-        card.innerHTML = `
-            <img class="card__img" src="${filmData.posterUrl}" alt="${filmData.nameEn}">
-            <div class="card__info">
-                <div class="card__name">${filmData.nameEn ? filmData.nameEn : ''} ${filmData.nameEn ? '(' + filmData.nameRu +')' : filmData.nameRu}</div>
-                <div class="card__type">Type : ${filmData.type}</div>
-                <div class="card__year">Year : ${filmData.year}</div>
-                <div class="card__countries">Countries : ${filmData.countries.map(countries => ` ${countries.country}`)}</div>
-                <div class="card__genres">Genres :${filmData.genres.map(genre => ` ${genre.genre}`)}</div>
-                <div class="card__rating">Rating : ${filmData.rating}</div>
-                <div class="card__length">Length : ${filmData.filmLength}</div>
-                <div class="card__descr">Description :<br>${filmData.description}</div>
-                <div class="card__close"><svg width="10" height="10" viewBox="0 0 29 30"     fill="none" xmlns="http://www.w3.org/2000/svg">
+        modal.classList.add('modal')
+        modal.innerHTML = `
+            <img class="modal__img" src="${filmData.posterUrl}" alt="${filmData.nameEn}">
+            <div class="modal__info">
+                <div class="modal__name">${filmData.nameEn ? filmData.nameEn : ''} ${filmData.nameEn ? '(' + filmData.nameRu +')' : filmData.nameRu}</div>
+                <div class="modal__type">Type : ${filmData.type}</div>
+                <div class="modal__year">Year : ${filmData.year}</div>
+                <div class="modal__countries">Countries : ${filmData.countries.map(countries => ` ${countries.country}`)}</div>
+                <div class="modal__genres">Genres :${filmData.genres.map(genre => ` ${genre.genre}`)}</div>
+                <div class="modal__rating">Rating : ${filmData.rating}</div>
+                <div class="modal__length">Length : ${filmData.filmLength}</div>
+                <div class="modal__descr">Description :<br>${filmData.description}</div>
+                <div class="modal__close"><svg width="10" height="10" viewBox="0 0 29 30"     fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M17.1568 14.5231L28.4489 3.23075C29.1837 2.49623 29.1837 1.30861 28.4489 0.574085C27.7144 -0.160437 26.5267 -0.160437 25.7922 0.574085L14.4998 11.8665L3.20781 0.574085C2.47295 -0.160437 1.28567 -0.160437 0.551149 0.574085C-0.183716 1.30861 -0.183716 2.49623 0.551149 3.23075L11.8432 14.5231L0.551149 25.8155C-0.183716 26.55 -0.183716 27.7376 0.551149 28.4721C0.917206 28.8385 1.39852 29.0226 1.87948 29.0226C2.36045 29.0226 2.84141 28.8385 3.20781 28.4721L14.4998 17.1798L25.7922 28.4721C26.1586 28.8385 26.6396 29.0226 27.1205 29.0226C27.6015 29.0226 28.0825 28.8385 28.4489 28.4721C29.1837 27.7376 29.1837 26.55 28.4489 25.8155L17.1568 14.5231Z" fill="white"/>
                 </svg></div>
             </div>
             
         `
-        this.modalContainer.appendChild(card);
-
-        //перенес работу с версткой
+        this.modalContainer.appendChild(modal);
         this.modalContainer.style.display = 'block';
         document.body.style.overflow = 'hidden';
+
+        this.modalContainer.addEventListener('click', (e) => {
+            if (e.target === this.modalContainer) {
+                this.handleDeleteModalClick(modal);
+            }
+        })
         
-        const closeBtn = card.querySelector('.card__close'); //поменял название
+        const closeModalBtn = modal.querySelector('.modal__close'); //поменял название
 
-        closeBtn.addEventListener('click', () => this.handleDeleteInfoClick(card));
+        closeModalBtn.addEventListener('click', () => this.handleDeleteModalClick(modal));
 
-        return card;
+        return modal;
     }
 
     renderFilmCard(filmData) {
@@ -17542,22 +17566,25 @@ class RenderUtil {
         const infoBtn = movie.querySelector('.movie__info');
 
         deleteBtn.addEventListener('click', () => this.handleDeleteClick(filmData.filmId));
-        infoBtn.addEventListener('click', () => this.handleDetailsInfoClick(filmData));
+        infoBtn.addEventListener('click', () => this.handleDetailsModalClick(filmData));
 
         return movie;
     }
 
-    render() {
-        // debugger
-        this.moviesContainer.innerHTML = '';
+    renderFilmsCards() {
         store.moviesStorage.forEach((filmData) => {
             this.renderFilmCard(filmData);
-            //перенес слушатели в их функцию
-        })
+        });
+    }
+
+    render() {
+        this.moviesContainer.innerHTML = '';
+        this.renderFilmsCards();
+        this.renderSelectFilmsField();
+
         if (store.detailsInfo) {
-            this.renderDetailsInfoModal(store.detailsInfo);
-        }
-        
+            this.renderDetailsModal(store.detailsInfo);
+        };
     }
 }
 
@@ -17581,6 +17608,19 @@ class Helpers {
         } else {
             return rate
         }
+    }
+
+    static getSelectList() {
+        const listFilms = document.querySelector('.my-list__select');
+        return listFilms;
+    }
+    static getSelectClose() {
+        const inputClose = document.querySelector('.new-film__close');
+        return inputClose;
+    }
+    static getSelectInput() {
+        const selectItem = document.querySelector('.film');
+        return selectItem;
     }
 }
 

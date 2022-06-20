@@ -50,13 +50,13 @@
             top: 33px;
         }
     }
-    .card {
+    .modal {
         margin: 150px auto;
     }
 }
 
 @media (max-height: 900px) {
-    .card {
+    .modal {
         font-size: 12px;
         margin: 110px auto;
         &__img {
@@ -78,7 +78,7 @@
 }
 
 @media (max-height: 500px) {
-    .card {
+    .modal {
         font-size: 10px;
         margin: 30px auto;
         line-height: 12px;
@@ -94,7 +94,7 @@
     }
 }
 @media (max-width: 700px) {
-    .card {
+    .modal {
         font-size: 10px;
         display: block;
         &__img {
@@ -112,7 +112,7 @@
 }
 
 @media (max-width: 620px) {
-    .card {
+    .modal {
         margin-right: 10px;
         margin-left: 10px;
     }
