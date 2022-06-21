@@ -1,5 +1,5 @@
 import { some } from "lodash";
-import { selectLoadFilms } from "../FilmService";
+import { debouncedLoadFilms } from "../FilmService";
 
 
 const apiMyFilm = 'https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=';
@@ -18,7 +18,7 @@ function select() {
 
     RenderInstance.render();
 
-    RenderInstance.renderSelectInput();
+    
 }
 
 class FilmActions {
@@ -125,7 +125,7 @@ class RenderUtil {
                   
             listFilms.innerHTML = '';
     
-            selectLoadFilms(apiUrl, (films) => {
+            debouncedLoadFilms(apiUrl, (films) => {
                 FilmActions.setLoadedFilms(films);
                 console.log(store.loadedFilms);
                 this.render();
@@ -237,6 +237,9 @@ class RenderUtil {
     }
 
     render() {
+        if (!Helpers.getSelectInput()) {
+            this.renderSelectInput();
+        }
         this.moviesContainer.innerHTML = '';
         this.renderFilmsCards();
         this.renderSelectFilmsField();
@@ -270,16 +273,13 @@ class Helpers {
     }
 
     static getSelectList() {
-        const listFilms = document.querySelector('.my-list__select');
-        return listFilms;
+        return document.querySelector('.my-list__select');
     }
     static getSelectClose() {
-        const inputClose = document.querySelector('.new-film__close');
-        return inputClose;
+        return document.querySelector('.new-film__close');
     }
     static getSelectInput() {
-        const selectItem = document.querySelector('.film');
-        return selectItem;
+        return document.querySelector('.film');
     }
 }
 

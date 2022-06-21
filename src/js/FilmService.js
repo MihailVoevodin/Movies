@@ -14,5 +14,5 @@ async function loadFilms(url){
     return resultData.films || []; 
 };
 
-export const selectLoadFilms = debounce((url, onSuccess) => 
+export const debouncedLoadFilms = debounce((url, onSuccess) => 
 loadFilms(url).then(onSuccess), 500);

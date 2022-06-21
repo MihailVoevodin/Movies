@@ -17222,7 +17222,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "selectLoadFilms": function() { return /* binding */ selectLoadFilms; }
+/* harmony export */   "debouncedLoadFilms": function() { return /* binding */ debouncedLoadFilms; }
 /* harmony export */ });
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
@@ -17242,7 +17242,7 @@ async function loadFilms(url){
     return resultData.films || []; 
 };
 
-const selectLoadFilms = (0,lodash__WEBPACK_IMPORTED_MODULE_0__.debounce)((url, onSuccess) => 
+const debouncedLoadFilms = (0,lodash__WEBPACK_IMPORTED_MODULE_0__.debounce)((url, onSuccess) => 
 loadFilms(url).then(onSuccess), 500);
 
 
@@ -17359,7 +17359,7 @@ function select() {
 
     RenderInstance.render();
 
-    RenderInstance.renderSelectInput();
+    
 }
 
 class FilmActions {
@@ -17466,7 +17466,7 @@ class RenderUtil {
                   
             listFilms.innerHTML = '';
     
-            (0,_FilmService__WEBPACK_IMPORTED_MODULE_1__.selectLoadFilms)(apiUrl, (films) => {
+            (0,_FilmService__WEBPACK_IMPORTED_MODULE_1__.debouncedLoadFilms)(apiUrl, (films) => {
                 FilmActions.setLoadedFilms(films);
                 console.log(store.loadedFilms);
                 this.render();
@@ -17578,6 +17578,9 @@ class RenderUtil {
     }
 
     render() {
+        if (!Helpers.getSelectInput()) {
+            this.renderSelectInput();
+        }
         this.moviesContainer.innerHTML = '';
         this.renderFilmsCards();
         this.renderSelectFilmsField();
@@ -17611,16 +17614,13 @@ class Helpers {
     }
 
     static getSelectList() {
-        const listFilms = document.querySelector('.my-list__select');
-        return listFilms;
+        return document.querySelector('.my-list__select');
     }
     static getSelectClose() {
-        const inputClose = document.querySelector('.new-film__close');
-        return inputClose;
+        return document.querySelector('.new-film__close');
     }
     static getSelectInput() {
-        const selectItem = document.querySelector('.film');
-        return selectItem;
+        return document.querySelector('.film');
     }
 }
 
