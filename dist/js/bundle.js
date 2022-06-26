@@ -17213,22 +17213,24 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 
-/***/ "./src/js/FilmService.js":
-/*!*******************************!*\
-  !*** ./src/js/FilmService.js ***!
-  \*******************************/
+/***/ "./src/js/FilmServices.js":
+/*!********************************!*\
+  !*** ./src/js/FilmServices.js ***!
+  \********************************/
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "debouncedLoadFilms": function() { return /* binding */ debouncedLoadFilms; }
+/* harmony export */   "debouncedLoadFilms": function() { return /* binding */ debouncedLoadFilms; },
+/* harmony export */   "topLoadFilms": function() { return /* binding */ topLoadFilms; }
 /* harmony export */ });
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
 
 
 const API_KEY = 'ba2becc0-f421-4ef5-bf44-ebac95a88660';
+
  
 async function loadFilms(url){
     const headers = {
@@ -17244,6 +17246,22 @@ async function loadFilms(url){
 
 const debouncedLoadFilms = (0,lodash__WEBPACK_IMPORTED_MODULE_0__.debounce)((url, onSuccess) => 
 loadFilms(url).then(onSuccess), 500);
+
+async function loadTopFilms(url) {
+    const headers = {
+        'Content-type': 'application/json',
+        'X-API-KEY': API_KEY,
+    };
+
+    const response = await fetch(url, {headers});
+    const resultData = await response.json();
+
+    return resultData.films || [];
+}
+
+const topLoadFilms = (url, onSuccess) => 
+    loadTopFilms(url).then(onSuccess);
+
 
 
 /***/ }),
@@ -17299,51 +17317,31 @@ function menu() {
 
 /***/ }),
 
-/***/ "./src/js/modules/scroll.js":
-/*!**********************************!*\
-  !*** ./src/js/modules/scroll.js ***!
-  \**********************************/
+/***/ "./src/js/modules/myListFilms.js":
+/*!***************************************!*\
+  !*** ./src/js/modules/myListFilms.js ***!
+  \***************************************/
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function scroll() {
-    const scrollBtn = document.querySelector('.scroll-top');
-
-    window.addEventListener('scroll', () => {
-        if (window.pageYOffset > '1000') {
-            scrollBtn.style.display = 'block';
-        } else {
-            scrollBtn.style.display = 'none';
-        }
-    })
-    
-
-    scrollBtn.addEventListener('click', () => {
-        window.scrollTo(0, 0);
-    })
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (scroll);
-
-/***/ }),
-
-/***/ "./src/js/modules/select.js":
-/*!**********************************!*\
-  !*** ./src/js/modules/select.js ***!
-  \**********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _FilmService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../FilmService */ "./src/js/FilmService.js");
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "store": function() { return /* binding */ store; },
+/* harmony export */   "RenderUtil": function() { return /* binding */ RenderUtil; }
+/* harmony export */ });
+/* harmony import */ var _myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./myListFilmsComponents/FilmActions */ "./src/js/modules/myListFilmsComponents/FilmActions.js");
+/* harmony import */ var _myListFilmsComponents_Helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./myListFilmsComponents/Helpers */ "./src/js/modules/myListFilmsComponents/Helpers.js");
+/* harmony import */ var _myListFilmsComponents_renderSelectInput__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./myListFilmsComponents/renderSelectInput */ "./src/js/modules/myListFilmsComponents/renderSelectInput.js");
+/* harmony import */ var _myListFilmsComponents_renderSelectFilmsField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./myListFilmsComponents/renderSelectFilmsField */ "./src/js/modules/myListFilmsComponents/renderSelectFilmsField.js");
+/* harmony import */ var _myListFilmsComponents_renderDetailsModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./myListFilmsComponents/renderDetailsModal */ "./src/js/modules/myListFilmsComponents/renderDetailsModal.js");
+/* harmony import */ var _myListFilmsComponents_renderFilmsCards__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./myListFilmsComponents/renderFilmsCards */ "./src/js/modules/myListFilmsComponents/renderFilmsCards.js");
 
 
 
 
-const apiMyFilm = 'https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=';
+
+
+
 
 const store = {
     moviesStorage: [],
@@ -17352,245 +17350,96 @@ const store = {
     selectFilmInputValue: null,
 }
 
-function select() {
-    FilmActions.initializeState();      
+function myListFilms() {
+    _myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_0__["default"].initializeState();      
 
     const RenderInstance = new RenderUtil();
 
     RenderInstance.render();
-
-    
-}
-
-class FilmActions {
-    static initializeState() {
-        store.moviesStorage = JSON.parse(localStorage.getItem('movies')) || [];
-    }
-    static addFilm(filmData) {
-        store.moviesStorage.push(filmData);
-        store.selectFilmInputValue = null;
-        localStorage.setItem('movies', JSON.stringify(store.moviesStorage));
-    }
-    static removeFilm(filmId) {
-        const filteredFilms = store.moviesStorage.filter((item) => item.filmId !== filmId);
-
-        store.moviesStorage = filteredFilms;
-        localStorage.setItem('movies', JSON.stringify(filteredFilms));
-    }
-    static addSelectFilms(films) {
-        store.loadedFilms = films;
-    }
-    static addDetailsModal(filmData) {
-        store.detailsInfo = filmData;
-        store.loadedFilms = [];
-    }
-    static deleteDetailsModal() {
-        store.detailsInfo = null;
-    }
-    static selectFilmInputValue(selectItem) {
-        store.selectFilmInputValue = selectItem.value;
-    }
-    static setLoadedFilms(films) {
-        store.loadedFilms = films;
-    }
-    static closeSelectFilms() {
-        store.selectFilmInputValue = null;
-        store.loadedFilms = [];
-    }
 }
 
 class RenderUtil {
     moviesContainer = document.querySelector('.my-list__items');
-    modalContainer = document.querySelector('.modal__container');
-    selectContainer = document.querySelector('.select');
-
-
-
-    renderSelectFilm(filmData) {
-        const listFilms = Helpers.getSelectList();
-        const selectItem = Helpers.getSelectInput();
-        const inputClose = Helpers.getSelectClose();
-        const film = document.createElement('li');
-        film.classList.add('film-item')
     
-        film.innerHTML = `
-            ${filmData.nameRu}  
-        `;
-
-        listFilms.appendChild(film);
-
-        film.addEventListener('click', () => {
-            FilmActions.addFilm(filmData);
-            this.closeSelectFilmsField(listFilms, inputClose, selectItem);
-            this.render();
-        });
-
-        if (selectItem.value != '') {
-            inputClose.style.display = 'block';
-        }
-
-        inputClose.addEventListener('click', (event) => {
-            event.stopImmediatePropagation()
-            this.closeSelectFilmsField(listFilms, inputClose, selectItem);
-        })
-
-        return film;
-    }
-
-    renderSelectInput() {
-        const selectInputField = document.createElement('div');
-
-        selectInputField.classList.add('new-film');
-
-        selectInputField.innerHTML = `
-            <input type="text" class="film" placeholder="Введите название фильма">
-            <div class="new-film__close">
-                <svg width="10" height="10" viewBox="0 0 29 30"     fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17.1568 14.5231L28.4489 3.23075C29.1837 2.49623 29.1837 1.30861 28.4489 0.574085C27.7144 -0.160437 26.5267 -0.160437 25.7922 0.574085L14.4998 11.8665L3.20781 0.574085C2.47295 -0.160437 1.28567 -0.160437 0.551149 0.574085C-0.183716 1.30861 -0.183716 2.49623 0.551149 3.23075L11.8432 14.5231L0.551149 25.8155C-0.183716 26.55 -0.183716 27.7376 0.551149 28.4721C0.917206 28.8385 1.39852 29.0226 1.87948 29.0226C2.36045 29.0226 2.84141 28.8385 3.20781 28.4721L14.4998 17.1798L25.7922 28.4721C26.1586 28.8385 26.6396 29.0226 27.1205 29.0226C27.6015 29.0226 28.0825 28.8385 28.4489 28.4721C29.1837 27.7376 29.1837 26.55 28.4489 25.8155L17.1568 14.5231Z" fill="black"/>
-                </svg>
-            </div>
-            <div class="my-list__wrapper">
-                <ul class="my-list__select">
-
-                </ul>
-            </div>
-        `;
-
-        this.selectContainer.appendChild(selectInputField);
-        const listFilms = document.querySelector('.my-list__select');
-        const selectItem = document.querySelector('.film');
-
-        selectItem.addEventListener('keyup', () => {
-            FilmActions.selectFilmInputValue(selectItem);
-            const  apiUrl = `${apiMyFilm}${store.selectFilmInputValue}`;
-                  
-            listFilms.innerHTML = '';
-    
-            (0,_FilmService__WEBPACK_IMPORTED_MODULE_1__.debouncedLoadFilms)(apiUrl, (films) => {
-                FilmActions.setLoadedFilms(films);
-                console.log(store.loadedFilms);
-                this.render();
-            });
-        });
-
-        return listFilms;
-    }
-
-    renderSelectFilmsField() {
-        const filmsForSelect = store.loadedFilms.filter((item) => {
-            return !(0,lodash__WEBPACK_IMPORTED_MODULE_0__.some)(store.moviesStorage, {filmId: item.filmId})
-        })
-        filmsForSelect.forEach((film) => {
-            this.renderSelectFilm(film);
-        });
-    };
-
-    closeSelectFilmsField(listFilms, inputClose, selectItem) {
-        FilmActions.closeSelectFilms();
-        inputClose.style.display = 'none';
-        listFilms.innerHTML = '';
-        selectItem.value = '';
-    };
-
-    handleDeleteClick(filmId) {
-        FilmActions.removeFilm(filmId);
-        this.render();
-    };
-    handleDetailsModalClick(filmData) {
-        FilmActions.addDetailsModal(filmData);
-        this.render();
-    };
-    handleDeleteModalClick(modal) {
-        FilmActions.deleteDetailsModal();
-        modal.remove();
-        this.modalContainer.style.display = 'none';
-        document.body.style.overflow = '';
-    }
-
-    renderDetailsModal(filmData) {
-        const modal = document.createElement('div');
-
-        modal.classList.add('modal')
-        modal.innerHTML = `
-            <img class="modal__img" src="${filmData.posterUrl}" alt="${filmData.nameEn}">
-            <div class="modal__info">
-                <div class="modal__name">${filmData.nameEn ? filmData.nameEn : ''} ${filmData.nameEn ? '(' + filmData.nameRu +')' : filmData.nameRu}</div>
-                <div class="modal__type">Type : ${filmData.type}</div>
-                <div class="modal__year">Year : ${filmData.year}</div>
-                <div class="modal__countries">Countries : ${filmData.countries.map(countries => ` ${countries.country}`)}</div>
-                <div class="modal__genres">Genres :${filmData.genres.map(genre => ` ${genre.genre}`)}</div>
-                <div class="modal__rating">Rating : ${filmData.rating}</div>
-                <div class="modal__length">Length : ${filmData.filmLength}</div>
-                <div class="modal__descr">Description :<br>${filmData.description}</div>
-                <div class="modal__close"><svg width="10" height="10" viewBox="0 0 29 30"     fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.1568 14.5231L28.4489 3.23075C29.1837 2.49623 29.1837 1.30861 28.4489 0.574085C27.7144 -0.160437 26.5267 -0.160437 25.7922 0.574085L14.4998 11.8665L3.20781 0.574085C2.47295 -0.160437 1.28567 -0.160437 0.551149 0.574085C-0.183716 1.30861 -0.183716 2.49623 0.551149 3.23075L11.8432 14.5231L0.551149 25.8155C-0.183716 26.55 -0.183716 27.7376 0.551149 28.4721C0.917206 28.8385 1.39852 29.0226 1.87948 29.0226C2.36045 29.0226 2.84141 28.8385 3.20781 28.4721L14.4998 17.1798L25.7922 28.4721C26.1586 28.8385 26.6396 29.0226 27.1205 29.0226C27.6015 29.0226 28.0825 28.8385 28.4489 28.4721C29.1837 27.7376 29.1837 26.55 28.4489 25.8155L17.1568 14.5231Z" fill="white"/>
-                </svg></div>
-            </div>
-            
-        `
-        this.modalContainer.appendChild(modal);
-        this.modalContainer.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-
-        this.modalContainer.addEventListener('click', (e) => {
-            if (e.target === this.modalContainer) {
-                this.handleDeleteModalClick(modal);
-            }
-        })
-        
-        const closeModalBtn = modal.querySelector('.modal__close'); //поменял название
-
-        closeModalBtn.addEventListener('click', () => this.handleDeleteModalClick(modal));
-
-        return modal;
-    }
-
-    renderFilmCard(filmData) {
-        const movie = document.createElement('li');
-        
-        movie.setAttribute('filmId', filmData.filmId);
-        movie.classList.add('movie');
-
-        movie.innerHTML = `
-            <img src="${filmData.posterUrl}" alt="${filmData.nameEn}">
-            <div class="movie__name movie__nameEn">${filmData.nameEn ? filmData.nameEn : ''}</div>
-            <div class="movie__name movie__nameRu">${filmData.nameEn ? '( ' + filmData.nameRu + ' )' : filmData.nameRu}</div>
-            <div class="movie__genres">${filmData.genres.slice(0, 3).map(genre => ` ${genre.genre}`)}</div>
-            <div class="movie__rating movie__rating_${Helpers.getRatingColor(filmData.rating)}">${filmData.rating != 'null' ? Helpers.getRating(filmData.rating) : 'no'}</div>
-            <div class="movie__close">Удалить</div>
-            <div class="movie__info">Подробнее...</div>
-        `
-        this.moviesContainer.appendChild(movie);
-
-        const deleteBtn = movie.querySelector('.movie__close');
-        const infoBtn = movie.querySelector('.movie__info');
-
-        deleteBtn.addEventListener('click', () => this.handleDeleteClick(filmData.filmId));
-        infoBtn.addEventListener('click', () => this.handleDetailsModalClick(filmData));
-
-        return movie;
-    }
-
-    renderFilmsCards() {
-        store.moviesStorage.forEach((filmData) => {
-            this.renderFilmCard(filmData);
-        });
-    }
-
     render() {
-        if (!Helpers.getSelectInput()) {
-            this.renderSelectInput();
+        if (!_myListFilmsComponents_Helpers__WEBPACK_IMPORTED_MODULE_1__["default"].getSelectInput()) {
+            (0,_myListFilmsComponents_renderSelectInput__WEBPACK_IMPORTED_MODULE_2__["default"])();
         }
+        (0,_myListFilmsComponents_renderSelectFilmsField__WEBPACK_IMPORTED_MODULE_3__["default"])();
         this.moviesContainer.innerHTML = '';
-        this.renderFilmsCards();
-        this.renderSelectFilmsField();
-
+        (0,_myListFilmsComponents_renderFilmsCards__WEBPACK_IMPORTED_MODULE_5__["default"])();
+        
         if (store.detailsInfo) {
-            this.renderDetailsModal(store.detailsInfo);
+            (0,_myListFilmsComponents_renderDetailsModal__WEBPACK_IMPORTED_MODULE_4__["default"])(store.detailsInfo);
         };
     }
 }
 
+/* harmony default export */ __webpack_exports__["default"] = (myListFilms);
+
+/***/ }),
+
+/***/ "./src/js/modules/myListFilmsComponents/FilmActions.js":
+/*!*************************************************************!*\
+  !*** ./src/js/modules/myListFilmsComponents/FilmActions.js ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _myListFilms__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../myListFilms */ "./src/js/modules/myListFilms.js");
+
+
+
+class FilmActions {
+    static initializeState() {
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.moviesStorage = JSON.parse(localStorage.getItem('movies')) || [];
+    }
+    static addFilm(filmData) {
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.moviesStorage.push(filmData);
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.selectFilmInputValue = null;
+        localStorage.setItem('movies', JSON.stringify(_myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.moviesStorage));
+    }
+    static removeFilm(filmId) {
+        const filteredFilms = _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.moviesStorage.filter((item) => item.filmId !== filmId);
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.loadedFilms = [];
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.moviesStorage = filteredFilms;
+        localStorage.setItem('movies', JSON.stringify(filteredFilms));
+    }
+    static addSelectFilms(films) {
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.loadedFilms = films;
+    }
+    static addDetailsModal(filmData) {
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.detailsInfo = filmData;
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.loadedFilms = [];
+    }
+    static deleteDetailsModal() {
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.detailsInfo = null;
+    }
+    static selectFilmInputValue(selectItem) {
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.selectFilmInputValue = selectItem.value;
+    }
+    static setLoadedFilms(films) {
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.loadedFilms = films;
+    }
+    static closeSelectFilms() {
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.selectFilmInputValue = null;
+        _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.loadedFilms = [];
+    }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (FilmActions);
+
+/***/ }),
+
+/***/ "./src/js/modules/myListFilmsComponents/Helpers.js":
+/*!*********************************************************!*\
+  !*** ./src/js/modules/myListFilmsComponents/Helpers.js ***!
+  \*********************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 class Helpers {
 
     static getRatingColor(rate) {
@@ -17624,7 +17473,300 @@ class Helpers {
     }
 }
 
-/* harmony default export */ __webpack_exports__["default"] = (select);
+/* harmony default export */ __webpack_exports__["default"] = (Helpers);
+
+/***/ }),
+
+/***/ "./src/js/modules/myListFilmsComponents/renderDetailsModal.js":
+/*!********************************************************************!*\
+  !*** ./src/js/modules/myListFilmsComponents/renderDetailsModal.js ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _FilmActions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./FilmActions */ "./src/js/modules/myListFilmsComponents/FilmActions.js");
+
+
+const modalContainer = document.querySelector('.modal__container');
+
+function renderDetailsModal(filmData) {
+    const modal = document.createElement('div');
+
+    modal.classList.add('modal')
+    modal.innerHTML = `
+        <img class="modal__img" src="${filmData.posterUrl}" alt="${filmData.nameEn}">
+        <div class="modal__info">
+            <div class="modal__name">${filmData.nameEn ? filmData.nameEn : ''} ${filmData.nameEn ? '(' + filmData.nameRu +')' : filmData.nameRu}</div>
+            <div class="modal__type">Type : ${filmData.type}</div>
+            <div class="modal__year">Year : ${filmData.year}</div>
+            <div class="modal__countries">Countries : ${filmData.countries.map(countries => ` ${countries.country}`)}</div>
+            <div class="modal__genres">Genres :${filmData.genres.map(genre => ` ${genre.genre}`)}</div>
+            <div class="modal__rating">Rating : ${filmData.rating}</div>
+            <div class="modal__length">Length : ${filmData.filmLength}</div>
+            <div class="modal__descr">Description :<br>${filmData.description}</div>
+            <div class="modal__close"><svg width="10" height="10" viewBox="0 0 29 30"     fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.1568 14.5231L28.4489 3.23075C29.1837 2.49623 29.1837 1.30861 28.4489 0.574085C27.7144 -0.160437 26.5267 -0.160437 25.7922 0.574085L14.4998 11.8665L3.20781 0.574085C2.47295 -0.160437 1.28567 -0.160437 0.551149 0.574085C-0.183716 1.30861 -0.183716 2.49623 0.551149 3.23075L11.8432 14.5231L0.551149 25.8155C-0.183716 26.55 -0.183716 27.7376 0.551149 28.4721C0.917206 28.8385 1.39852 29.0226 1.87948 29.0226C2.36045 29.0226 2.84141 28.8385 3.20781 28.4721L14.4998 17.1798L25.7922 28.4721C26.1586 28.8385 26.6396 29.0226 27.1205 29.0226C27.6015 29.0226 28.0825 28.8385 28.4489 28.4721C29.1837 27.7376 29.1837 26.55 28.4489 25.8155L17.1568 14.5231Z" fill="white"/>
+            </svg></div>
+        </div>
+        
+    `
+    modalContainer.appendChild(modal);
+    modalContainer.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+
+    modalContainer.addEventListener('click', (e) => {
+        if (e.target === modalContainer) {
+            handleDeleteModalClick(modal);
+        }
+    })
+    
+    const closeModalBtn = modal.querySelector('.modal__close');
+
+    closeModalBtn.addEventListener('click', () => handleDeleteModalClick(modal));
+
+    return modal;
+}
+
+function handleDeleteModalClick(modal) {
+    _FilmActions__WEBPACK_IMPORTED_MODULE_0__["default"].deleteDetailsModal();
+    modal.remove();
+    modalContainer.style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (renderDetailsModal);
+
+/***/ }),
+
+/***/ "./src/js/modules/myListFilmsComponents/renderFilmsCards.js":
+/*!******************************************************************!*\
+  !*** ./src/js/modules/myListFilmsComponents/renderFilmsCards.js ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _myListFilms__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../myListFilms */ "./src/js/modules/myListFilms.js");
+/* harmony import */ var _FilmActions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FilmActions */ "./src/js/modules/myListFilmsComponents/FilmActions.js");
+/* harmony import */ var _Helpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Helpers */ "./src/js/modules/myListFilmsComponents/Helpers.js");
+
+
+
+
+
+
+function renderFilmCard(filmData) {
+    const moviesContainer = document.querySelector('.my-list__items');
+    const movie = document.createElement('li');
+
+    movie.setAttribute('filmId', filmData.filmId);
+    movie.classList.add('movie');
+
+    movie.innerHTML = `
+        <img src="${filmData.posterUrl}" alt="${filmData.nameEn}">
+        <div class="movie__name movie__nameEn">${filmData.nameEn ? filmData.nameEn : ''}</div>
+        <div class="movie__name movie__nameRu">${filmData.nameEn ? '( ' + filmData.nameRu + ' )' : filmData.nameRu}</div>
+        <div class="movie__genres">${filmData.genres.slice(0, 3).map(genre => ` ${genre.genre}`)}</div>
+        <div class="movie__rating movie__rating_${_Helpers__WEBPACK_IMPORTED_MODULE_2__["default"].getRatingColor(filmData.rating)}">${filmData.rating != 'null' ? _Helpers__WEBPACK_IMPORTED_MODULE_2__["default"].getRating(filmData.rating) : 'no'}</div>
+        <div class="movie__close">Удалить</div>
+        <div class="movie__info">Подробнее...</div>
+    `
+    moviesContainer.appendChild(movie);
+
+    const deleteBtn = movie.querySelector('.movie__close');
+    const infoBtn = movie.querySelector('.movie__info');
+
+    deleteBtn.addEventListener('click', () => handleDeleteClick(filmData.filmId));
+    infoBtn.addEventListener('click', () => handleDetailsModalClick(filmData));
+
+    return movie;
+}
+
+function renderFilmsCards() {
+    _myListFilms__WEBPACK_IMPORTED_MODULE_0__.store.moviesStorage.forEach((filmData) => {
+        renderFilmCard(filmData);
+    });
+}
+
+function handleDeleteClick(filmId) {
+    _FilmActions__WEBPACK_IMPORTED_MODULE_1__["default"].removeFilm(filmId);
+    const RenderInstance = new _myListFilms__WEBPACK_IMPORTED_MODULE_0__.RenderUtil();//не пойму куда запихнуть, пишет нет доступа перед инициализацией
+    RenderInstance.render();
+};
+function handleDetailsModalClick(filmData) {
+    _FilmActions__WEBPACK_IMPORTED_MODULE_1__["default"].addDetailsModal(filmData);
+    const RenderInstance = new _myListFilms__WEBPACK_IMPORTED_MODULE_0__.RenderUtil();//не пойму куда запихнуть, пишет нет доступа перед инициализацией
+    RenderInstance.render();
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (renderFilmsCards);
+
+/***/ }),
+
+/***/ "./src/js/modules/myListFilmsComponents/renderSelectFilmsField.js":
+/*!************************************************************************!*\
+  !*** ./src/js/modules/myListFilmsComponents/renderSelectFilmsField.js ***!
+  \************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _myListFilms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../myListFilms */ "./src/js/modules/myListFilms.js");
+/* harmony import */ var _FilmActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./FilmActions */ "./src/js/modules/myListFilmsComponents/FilmActions.js");
+/* harmony import */ var _Helpers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Helpers */ "./src/js/modules/myListFilmsComponents/Helpers.js");
+
+
+
+
+
+
+function renderSelectFilm(filmData) {
+    const RenderInstance = new _myListFilms__WEBPACK_IMPORTED_MODULE_1__.RenderUtil();
+
+    const listFilms = _Helpers__WEBPACK_IMPORTED_MODULE_3__["default"].getSelectList();
+    const selectItem = _Helpers__WEBPACK_IMPORTED_MODULE_3__["default"].getSelectInput();
+    const inputClose = _Helpers__WEBPACK_IMPORTED_MODULE_3__["default"].getSelectClose();
+    const film = document.createElement('li');
+    film.classList.add('film-item')
+
+    film.innerHTML = `
+        ${filmData.nameRu}  
+    `;
+
+    listFilms.appendChild(film);
+
+    film.addEventListener('click', () => {
+        _FilmActions__WEBPACK_IMPORTED_MODULE_2__["default"].addFilm(filmData);
+        closeSelectFilmsField(listFilms, inputClose, selectItem);
+        RenderInstance.render();
+    });
+
+    if (selectItem.value != '') {
+        inputClose.style.display = 'block';
+    }
+
+    inputClose.addEventListener('click', (event) => {
+        event.stopImmediatePropagation()
+        closeSelectFilmsField(listFilms, inputClose, selectItem);
+    })
+
+    return film;
+}
+
+function renderSelectFilmsField() {
+    const filmsForSelect = _myListFilms__WEBPACK_IMPORTED_MODULE_1__.store.loadedFilms.filter((item) => {
+        return !(0,lodash__WEBPACK_IMPORTED_MODULE_0__.some)(_myListFilms__WEBPACK_IMPORTED_MODULE_1__.store.moviesStorage, {filmId: item.filmId})
+    })
+    filmsForSelect.forEach((film) => {
+        renderSelectFilm(film);
+    });
+};
+
+function closeSelectFilmsField(listFilms, inputClose, selectItem) {
+    _FilmActions__WEBPACK_IMPORTED_MODULE_2__["default"].closeSelectFilms();
+    inputClose.style.display = 'none';
+    listFilms.innerHTML = '';
+    selectItem.value = '';
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (renderSelectFilmsField);
+
+/***/ }),
+
+/***/ "./src/js/modules/myListFilmsComponents/renderSelectInput.js":
+/*!*******************************************************************!*\
+  !*** ./src/js/modules/myListFilmsComponents/renderSelectInput.js ***!
+  \*******************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _FilmServices__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../FilmServices */ "./src/js/FilmServices.js");
+/* harmony import */ var _myListFilms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../myListFilms */ "./src/js/modules/myListFilms.js");
+/* harmony import */ var _FilmActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./FilmActions */ "./src/js/modules/myListFilmsComponents/FilmActions.js");
+
+
+
+
+
+const apiMyFilm = 'https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=';
+const selectContainer = document.querySelector('.select');
+
+function renderSelectInput() {
+    
+    const selectInputField = document.createElement('div');
+
+    const RenderInstance = new _myListFilms__WEBPACK_IMPORTED_MODULE_1__.RenderUtil();
+
+    selectInputField.classList.add('new-film');
+
+    selectInputField.innerHTML = `
+        <input type="text" class="film" placeholder="Введите название фильма">
+        <div class="new-film__close">
+            <svg width="10" height="10" viewBox="0 0 29 30"     fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.1568 14.5231L28.4489 3.23075C29.1837 2.49623 29.1837 1.30861 28.4489 0.574085C27.7144 -0.160437 26.5267 -0.160437 25.7922 0.574085L14.4998 11.8665L3.20781 0.574085C2.47295 -0.160437 1.28567 -0.160437 0.551149 0.574085C-0.183716 1.30861 -0.183716 2.49623 0.551149 3.23075L11.8432 14.5231L0.551149 25.8155C-0.183716 26.55 -0.183716 27.7376 0.551149 28.4721C0.917206 28.8385 1.39852 29.0226 1.87948 29.0226C2.36045 29.0226 2.84141 28.8385 3.20781 28.4721L14.4998 17.1798L25.7922 28.4721C26.1586 28.8385 26.6396 29.0226 27.1205 29.0226C27.6015 29.0226 28.0825 28.8385 28.4489 28.4721C29.1837 27.7376 29.1837 26.55 28.4489 25.8155L17.1568 14.5231Z" fill="black"/>
+            </svg>
+        </div>
+        <div class="my-list__wrapper">
+            <ul class="my-list__select">
+
+            </ul>
+        </div>
+    `;
+
+    selectContainer.appendChild(selectInputField);
+    const listFilms = document.querySelector('.my-list__select');
+    const selectItem = document.querySelector('.film');
+
+    selectItem.addEventListener('keyup', () => {
+        _FilmActions__WEBPACK_IMPORTED_MODULE_2__["default"].selectFilmInputValue(selectItem);
+        const  apiUrl = `${apiMyFilm}${_myListFilms__WEBPACK_IMPORTED_MODULE_1__.store.selectFilmInputValue}`;
+              
+        listFilms.innerHTML = '';
+
+        (0,_FilmServices__WEBPACK_IMPORTED_MODULE_0__.debouncedLoadFilms)(apiUrl, (films) => {
+            _FilmActions__WEBPACK_IMPORTED_MODULE_2__["default"].setLoadedFilms(films);
+            console.log(_myListFilms__WEBPACK_IMPORTED_MODULE_1__.store.loadedFilms);
+            RenderInstance.render();
+        });
+    });
+
+    return selectInputField;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (renderSelectInput);
+
+/***/ }),
+
+/***/ "./src/js/modules/scroll.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/scroll.js ***!
+  \**********************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function scroll() {
+    const scrollBtn = document.querySelector('.scroll-top');
+
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > '1000') {
+            scrollBtn.style.display = 'block';
+        } else {
+            scrollBtn.style.display = 'none';
+        }
+    })
+    
+
+    scrollBtn.addEventListener('click', () => {
+        window.scrollTo(0, 0);
+    })
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (scroll);
 
 /***/ }),
 
@@ -17636,62 +17778,62 @@ class Helpers {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _myListFilmsComponents_Helpers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./myListFilmsComponents/Helpers */ "./src/js/modules/myListFilmsComponents/Helpers.js");
+/* harmony import */ var _FilmServices__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../FilmServices */ "./src/js/FilmServices.js");
+
+
+
+
+const store = {
+    topFilms: []
+}
+
+const apiUrlTop = 'https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_100_POPULAR_FILMS&page=1';
+
 function topFilms() {
-    const _apiKey = 'ba2becc0-f421-4ef5-bf44-ebac95a88660',
-      apiUrlPopular = 'https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_100_POPULAR_FILMS&page=1';
-      
+    
+    const RenderInstance = new RenderUtil;
 
-    getPopularFilms(apiUrlPopular)
+    RenderInstance.render();
 
-    async function getPopularFilms(url) {
-        const res = await fetch(url, {
-            headers: {
-                'Content-type': 'application/json',
-                'X-API-KEY': _apiKey,
-            },
-        })
+    (0,_FilmServices__WEBPACK_IMPORTED_MODULE_1__.topLoadFilms)(apiUrlTop, (films) => {
+        FilmActions.setTopFilms(films);
+        RenderInstance.render();
+    })
+}
 
-        const resData = await res.json();
-        createCards(resData)
+class FilmActions {
+    static setTopFilms(films) {
+        store.topFilms = films;
     }
+}
 
-    function createCards(card) {
-        const movies = document.querySelector('.movies');
+class RenderUtil {
+    topFilmsContainer = document.querySelector('.movies');
 
-        card.films.forEach(item => {
-            const movie = document.createElement('div')
-            movie.classList.add('movie')
+    createTopFilmsCard(item) {
+            const movie = document.createElement('div');
+            movie.classList.add('movie');
             movie.innerHTML = `
             <div>
                 <img src="${item.posterUrl}" alt="${item.nameEn}">
                 <div class="movie__name movie__nameEn">${item.nameEn ? item.nameEn : ''}</div>
                 <div class="movie__name movie__nameRu">${item.nameEn ? '( ' + item.nameRu + ' )' : item.nameRu}</div>
                 <div class="movie__genres">${item.genres.slice(0, 3).map(genre => ` ${genre.genre}`)}</div>
-                <div class="movie__rating movie__rating_${getRatingColor(item.rating)}">${getRating(item.rating)}</div>
+                <div class="movie__rating movie__rating_${_myListFilmsComponents_Helpers__WEBPACK_IMPORTED_MODULE_0__["default"].getRatingColor(item.rating)}">${_myListFilmsComponents_Helpers__WEBPACK_IMPORTED_MODULE_0__["default"].getRating(item.rating)}</div>
             </div>
-            `
-            movies.appendChild(movie)
+            `;
+            this.topFilmsContainer.appendChild(movie);
+    }
+
+    createTopFilmsCards() {
+        store.topFilms.forEach((filmData) => {
+            this.createTopFilmsCard(filmData);
         })
-
     }
 
-
-    function getRatingColor(rate) {
-        if (rate >= '7') {
-            return 'green';
-        } else if (rate > '5') {
-            return 'orange';
-        } else {
-            return 'red';
-        }
-    }
-
-    function getRating(rate) {
-        if (rate.includes('%')) {
-            return [rate.substr(0, 1), rate.substr(1, 1)].join('.')
-        } else {
-            return rate
-        }
+    render() {
+        this.createTopFilmsCards()
     }
 }
 
@@ -17801,7 +17943,7 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_menu__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/menu */ "./src/js/modules/menu.js");
 /* harmony import */ var _modules_topFilms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/topFilms */ "./src/js/modules/topFilms.js");
-/* harmony import */ var _modules_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/select */ "./src/js/modules/select.js");
+/* harmony import */ var _modules_myListFilms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/myListFilms */ "./src/js/modules/myListFilms.js");
 /* harmony import */ var _modules_scroll__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/scroll */ "./src/js/modules/scroll.js");
 
 
@@ -17810,7 +17952,7 @@ __webpack_require__.r(__webpack_exports__);
 
     (0,_modules_menu__WEBPACK_IMPORTED_MODULE_0__["default"])();
     (0,_modules_topFilms__WEBPACK_IMPORTED_MODULE_1__["default"])();
-    (0,_modules_select__WEBPACK_IMPORTED_MODULE_2__["default"])();
+    (0,_modules_myListFilms__WEBPACK_IMPORTED_MODULE_2__["default"])();
     (0,_modules_scroll__WEBPACK_IMPORTED_MODULE_3__["default"])();
 }();
 /******/ })()
