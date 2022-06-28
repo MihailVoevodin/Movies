@@ -7,7 +7,7 @@ import Helpers from "./Helpers";
 function FilmCard(filmData) {
     const moviesContainer = document.querySelector('.my-list__items');
     const movie = document.createElement('li');
-
+    const MyListInstance = new MyListComponent();
     movie.setAttribute('filmId', filmData.filmId);
     movie.classList.add('movie');
 
@@ -38,9 +38,7 @@ function FilmsCards() {
 }
 
 function handleDeleteClick(filmId) {
-    FilmActions.removeFilm(filmId);
-    const MyListInstance = new MyListComponent();//не пойму куда запихнуть, пишет нет доступа перед инициализацией
-    MyListInstance.render();
+    FilmActions.removeFilm(filmId);//перенес в этот экшн рендер, так надо было?)
 };
 function handleDetailsModalClick(filmData) {
     FilmActions.addDetailsModal(filmData);

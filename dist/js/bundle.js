@@ -17515,6 +17515,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "store": function() { return /* binding */ store; }
 /* harmony export */ });
+/* harmony import */ var _MyListFilms__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../MyListFilms */ "./src/js/modules/MyListFilms.js");
+
+
 const store = {
     moviesStorage: [], //массив с добавленными фильмами через селект
     loadedFilms: [], //массив заполняющийся при загрузке фильмов в селекте
@@ -17523,6 +17526,7 @@ const store = {
     topFilms: [] //массив с загруженным топом фильмов
 }
 
+const MyListInstance = new _MyListFilms__WEBPACK_IMPORTED_MODULE_0__.MyListComponent(); //перенес сюда
 
 class FilmActions {
     static initializeState() {
@@ -17538,6 +17542,7 @@ class FilmActions {
         store.moviesStorage = filteredFilms;
         store.loadedFilms = [];
         localStorage.setItem('movies', JSON.stringify(filteredFilms));
+        MyListInstance.render();
     }
     static addSelectFilms(films) {
         store.loadedFilms = films;
@@ -17589,7 +17594,7 @@ __webpack_require__.r(__webpack_exports__);
 function FilmCard(filmData) {
     const moviesContainer = document.querySelector('.my-list__items');
     const movie = document.createElement('li');
-
+    const MyListInstance = new _MyListFilms__WEBPACK_IMPORTED_MODULE_1__.MyListComponent();
     movie.setAttribute('filmId', filmData.filmId);
     movie.classList.add('movie');
 
@@ -17620,9 +17625,7 @@ function FilmsCards() {
 }
 
 function handleDeleteClick(filmId) {
-    _FilmActions__WEBPACK_IMPORTED_MODULE_0__["default"].removeFilm(filmId);
-    const MyListInstance = new _MyListFilms__WEBPACK_IMPORTED_MODULE_1__.MyListComponent();//не пойму куда запихнуть, пишет нет доступа перед инициализацией
-    MyListInstance.render();
+    _FilmActions__WEBPACK_IMPORTED_MODULE_0__["default"].removeFilm(filmId);//перенес в этот экшн рендер, так надо было?)
 };
 function handleDetailsModalClick(filmData) {
     _FilmActions__WEBPACK_IMPORTED_MODULE_0__["default"].addDetailsModal(filmData);

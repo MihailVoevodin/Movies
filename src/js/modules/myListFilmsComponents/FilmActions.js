@@ -1,3 +1,5 @@
+import { MyListComponent } from "../MyListFilms";
+
 export const store = {
     moviesStorage: [], //массив с добавленными фильмами через селект
     loadedFilms: [], //массив заполняющийся при загрузке фильмов в селекте
@@ -6,6 +8,7 @@ export const store = {
     topFilms: [] //массив с загруженным топом фильмов
 }
 
+const MyListInstance = new MyListComponent(); //перенес сюда
 
 class FilmActions {
     static initializeState() {
@@ -21,6 +24,7 @@ class FilmActions {
         store.moviesStorage = filteredFilms;
         store.loadedFilms = [];
         localStorage.setItem('movies', JSON.stringify(filteredFilms));
+        MyListInstance.render();
     }
     static addSelectFilms(films) {
         store.loadedFilms = films;
