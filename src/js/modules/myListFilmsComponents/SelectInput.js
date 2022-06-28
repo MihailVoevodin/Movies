@@ -1,16 +1,17 @@
 import { debouncedLoadFilms } from '../../FilmServices';
-import { store } from '../myListFilms';
+import { store } from "./FilmActions";
 import FilmActions from './FilmActions';
-import { RenderUtil } from '../myListFilms';
+import { MyListComponent } from '../MyListFilms';
+import { MY_FILM_URL } from '../Const';
 
-const apiMyFilm = 'https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=';
+
 const selectContainer = document.querySelector('.select');
 
-function renderSelectInput() {
+function SelectInput() {
     
     const selectInputField = document.createElement('div');
 
-    const RenderInstance = new RenderUtil();
+    const MyListInstance = new MyListComponent();
 
     selectInputField.classList.add('new-film');
 
@@ -34,18 +35,18 @@ function renderSelectInput() {
 
     selectItem.addEventListener('keyup', () => {
         FilmActions.selectFilmInputValue(selectItem);
-        const  apiUrl = `${apiMyFilm}${store.selectFilmInputValue}`;
+        const  apiUrl = `${MY_FILM_URL}${store.selectFilmInputValue}`;
               
         listFilms.innerHTML = '';
 
         debouncedLoadFilms(apiUrl, (films) => {
             FilmActions.setLoadedFilms(films);
             console.log(store.loadedFilms);
-            RenderInstance.render();
+            MyListInstance.render();
         });
     });
 
     return selectInputField;
 }
 
-export default renderSelectInput;
+export default SelectInput;

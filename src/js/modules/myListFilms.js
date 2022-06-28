@@ -1,41 +1,36 @@
 import FilmActions from "./myListFilmsComponents/FilmActions";
 import Helpers from "./myListFilmsComponents/Helpers";
-import renderSelectInput from "./myListFilmsComponents/renderSelectInput";
-import renderSelectFilmsField from "./myListFilmsComponents/renderSelectFilmsField";
-import renderDetailsModal from "./myListFilmsComponents/renderDetailsModal";
-import renderFilmsCards from "./myListFilmsComponents/renderFilmsCards";
+import SelectInput from "./myListFilmsComponents/SelectInput";
+import SelectFilmsField from "./myListFilmsComponents/SelectFilmsField";
+import DetailsModal from "./myListFilmsComponents/DetailsModal";
+import FilmsCards from "./myListFilmsComponents/FilmsCards";
+import { store } from "./myListFilmsComponents/FilmActions";
 
 
-export const store = {
-    moviesStorage: [],
-    loadedFilms: [],
-    detailsInfo: null,
-    selectFilmInputValue: null,
-}
 
-function myListFilms() {
+function myList() {
     FilmActions.initializeState();      
 
-    const RenderInstance = new RenderUtil();
+    const MyListInstance = new MyListComponent();
 
-    RenderInstance.render();
+    MyListInstance.render();
 }
 
-export class RenderUtil {
+export class MyListComponent {
     moviesContainer = document.querySelector('.my-list__items');
     
     render() {
         if (!Helpers.getSelectInput()) {
-            renderSelectInput();
+            SelectInput();
         }
-        renderSelectFilmsField();
+        SelectFilmsField();
         this.moviesContainer.innerHTML = '';
-        renderFilmsCards();
+        FilmsCards();
         
         if (store.detailsInfo) {
-            renderDetailsModal(store.detailsInfo);
+            DetailsModal(store.detailsInfo);
         };
     }
 }
 
-export default myListFilms;
+export default myList;

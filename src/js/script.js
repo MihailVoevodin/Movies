@@ -1,9 +1,10 @@
 import menu from './modules/menu';
-import topFilms from './modules/topFilms';
-import myListFilms from './modules/myListFilms';
+import topList from './modules/TopFilms';
+import MyList from './modules/MyListFilms';
 import scroll from './modules/scroll';
 
     menu();
-    topFilms();
-    myListFilms();
+    topList();
+    MyList();
     scroll();
+    

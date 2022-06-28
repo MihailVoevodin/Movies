@@ -1,10 +1,10 @@
-import { store } from "../myListFilms";
-import { RenderUtil } from '../myListFilms';
+import { store } from "./FilmActions";
+import { MyListComponent } from '../MyListFilms';
 import FilmActions from "./FilmActions";
 import Helpers from "./Helpers";
 
 
-function renderFilmCard(filmData) {
+function FilmCard(filmData) {
     const moviesContainer = document.querySelector('.my-list__items');
     const movie = document.createElement('li');
 
@@ -31,21 +31,21 @@ function renderFilmCard(filmData) {
     return movie;
 }
 
-function renderFilmsCards() {
+function FilmsCards() {
     store.moviesStorage.forEach((filmData) => {
-        renderFilmCard(filmData);
+        FilmCard(filmData);
     });
 }
 
 function handleDeleteClick(filmId) {
     FilmActions.removeFilm(filmId);
-    const RenderInstance = new RenderUtil();//не пойму куда запихнуть, пишет нет доступа перед инициализацией
-    RenderInstance.render();
+    const MyListInstance = new MyListComponent();//не пойму куда запихнуть, пишет нет доступа перед инициализацией
+    MyListInstance.render();
 };
 function handleDetailsModalClick(filmData) {
     FilmActions.addDetailsModal(filmData);
-    const RenderInstance = new RenderUtil();//не пойму куда запихнуть, пишет нет доступа перед инициализацией
-    RenderInstance.render();
+    const MyListInstance = new MyListComponent();//не пойму куда запихнуть, пишет нет доступа перед инициализацией
+    MyListInstance.render();
 };
 
-export default renderFilmsCards;
+export default FilmsCards;

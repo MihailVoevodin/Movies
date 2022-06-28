@@ -2,7 +2,7 @@ import FilmActions from "./FilmActions";
 
 const modalContainer = document.querySelector('.modal__container');
 
-function renderDetailsModal(filmData) {
+function DetailsModal(filmData) {
     const modal = document.createElement('div');
 
     modal.classList.add('modal')
@@ -47,4 +47,4 @@ function handleDeleteModalClick(modal) {
     document.body.style.overflow = '';
 }
 
-export default renderDetailsModal;
+export default DetailsModal;

@@ -1,32 +1,20 @@
 import Helpers from "./myListFilmsComponents/Helpers";
+import FilmActions from "./myListFilmsComponents/FilmActions";
 import { topLoadFilms } from "../FilmServices";
+import { store } from "./myListFilmsComponents/FilmActions";
+import { TOP_FILMS_URL } from "./Const";
 
 
-const store = {
-    topFilms: []
-}
+function topList() {
+    const TopListInstance = new TopListComponent();
 
-const apiUrlTop = 'https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_100_POPULAR_FILMS&page=1';
-
-function topFilms() {
-    
-    const RenderInstance = new RenderUtil;
-
-    RenderInstance.render();
-
-    topLoadFilms(apiUrlTop, (films) => {
+    topLoadFilms(TOP_FILMS_URL, (films) => {
         FilmActions.setTopFilms(films);
-        RenderInstance.render();
+        TopListInstance.render();
     })
 }
 
-class FilmActions {
-    static setTopFilms(films) {
-        store.topFilms = films;
-    }
-}
-
-class RenderUtil {
+class TopListComponent {
     topFilmsContainer = document.querySelector('.movies');
 
     createTopFilmsCard(item) {
@@ -41,12 +29,12 @@ class RenderUtil {
                 <div class="movie__rating movie__rating_${Helpers.getRatingColor(item.rating)}">${Helpers.getRating(item.rating)}</div>
             </div>
             `;
-            this.topFilmsContainer.appendChild(movie);
+            return movie;
     }
 
     createTopFilmsCards() {
         store.topFilms.forEach((filmData) => {
-            this.createTopFilmsCard(filmData);
+            this.topFilmsContainer.appendChild(this.createTopFilmsCard(filmData));
         })
     }
 
@@ -55,4 +43,4 @@ class RenderUtil {
     }
 }
 
-export default topFilms;
+export default topList;

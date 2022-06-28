@@ -1,4 +1,10 @@
-import { store } from "../myListFilms";
+export const store = {
+    moviesStorage: [], //массив с добавленными фильмами через селект
+    loadedFilms: [], //массив заполняющийся при загрузке фильмов в селекте
+    detailsInfo: null, //объект фильма используемый для модального окна
+    selectFilmInputValue: null, //value инпута
+    topFilms: [] //массив с загруженным топом фильмов
+}
 
 
 class FilmActions {
@@ -12,8 +18,8 @@ class FilmActions {
     }
     static removeFilm(filmId) {
         const filteredFilms = store.moviesStorage.filter((item) => item.filmId !== filmId);
-        store.loadedFilms = [];
         store.moviesStorage = filteredFilms;
+        store.loadedFilms = [];
         localStorage.setItem('movies', JSON.stringify(filteredFilms));
     }
     static addSelectFilms(films) {
@@ -35,6 +41,9 @@ class FilmActions {
     static closeSelectFilms() {
         store.selectFilmInputValue = null;
         store.loadedFilms = [];
+    }
+    static setTopFilms(films) {
+        store.topFilms = films;
     }
 }
 

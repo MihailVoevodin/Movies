@@ -1,11 +1,11 @@
 import { some } from "lodash";
-import { store } from "../myListFilms";
+import { store } from "./FilmActions";
 import FilmActions from "./FilmActions";
 import Helpers from "./Helpers";
-import { RenderUtil } from '../myListFilms';
+import { MyListComponent } from '../MyListFilms';
 
-function renderSelectFilm(filmData) {
-    const RenderInstance = new RenderUtil();
+function SelectFilm(filmData) {
+    const MyListInstance = new MyListComponent();
 
     const listFilms = Helpers.getSelectList();
     const selectItem = Helpers.getSelectInput();
@@ -22,7 +22,7 @@ function renderSelectFilm(filmData) {
     film.addEventListener('click', () => {
         FilmActions.addFilm(filmData);
         closeSelectFilmsField(listFilms, inputClose, selectItem);
-        RenderInstance.render();
+        MyListInstance.render();
     });
 
     if (selectItem.value != '') {
@@ -37,12 +37,12 @@ function renderSelectFilm(filmData) {
     return film;
 }
 
-function renderSelectFilmsField() {
+function SelectFilmsField() {
     const filmsForSelect = store.loadedFilms.filter((item) => {
         return !some(store.moviesStorage, {filmId: item.filmId})
     })
     filmsForSelect.forEach((film) => {
-        renderSelectFilm(film);
+        SelectFilm(film);
     });
 };
 
@@ -53,4 +53,4 @@ function closeSelectFilmsField(listFilms, inputClose, selectItem) {
     selectItem.value = '';
 };
 
-export default renderSelectFilmsField;
+export default SelectFilmsField;
