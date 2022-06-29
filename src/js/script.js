@@ -1,10 +1,3 @@
-import menu from './modules/menu';
-import topList from './modules/TopFilms';
-import MyList from './modules/MyListFilms';
-import scroll from './modules/scroll';
+import {App} from "./App";
 
-    menu();
-    topList();
-    MyList();
-    scroll();
-    
+App.render();

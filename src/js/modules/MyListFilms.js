@@ -1,4 +1,3 @@
-import FilmActions from "./myListFilmsComponents/FilmActions";
 import Helpers from "./myListFilmsComponents/Helpers";
 import SelectInput from "./myListFilmsComponents/SelectInput";
 import SelectFilmsField from "./myListFilmsComponents/SelectFilmsField";
@@ -7,17 +6,10 @@ import FilmsCards from "./myListFilmsComponents/FilmsCards";
 import { store } from "./myListFilmsComponents/FilmActions";
 
 
-
-function myList() {
-    FilmActions.initializeState();      
-
-    const MyListInstance = new MyListComponent();
-
-    MyListInstance.render();
-}
-
 export class MyListComponent {
-    moviesContainer = document.querySelector('.my-list__items');
+    get moviesContainer() {
+        return document.querySelector('.my-list__items');
+    }
     
     render() {
         if (!Helpers.getSelectInput()) {
@@ -29,8 +21,6 @@ export class MyListComponent {
         
         if (store.detailsInfo) {
             DetailsModal(store.detailsInfo);
-        };
+        }
     }
 }
-
-export default myList;

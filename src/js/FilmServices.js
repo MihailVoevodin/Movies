@@ -2,7 +2,7 @@ import { debounce } from "lodash";
 
 const API_KEY = 'ba2becc0-f421-4ef5-bf44-ebac95a88660';
 
-async function loadFilms(url){
+export async function loadFilms(url){
     const headers = {
         'Content-type': 'application/json',
         'X-API-KEY': API_KEY,
@@ -12,10 +12,9 @@ async function loadFilms(url){
     const resultData = await response.json();
     
     return resultData.films || []; 
-};
+}
 
-export const debouncedLoadFilms = debounce((url, onSuccess) => 
-loadFilms(url).then(onSuccess), 500);
+export const debouncedLoadFilms = debounce((url, onSuccess) => {
+    return loadFilms(url).then(onSuccess);
+}, 500)
 
-export const topLoadFilms = (url, onSuccess) => 
-    loadFilms(url).then(onSuccess);

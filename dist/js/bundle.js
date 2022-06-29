@@ -17213,6 +17213,48 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 
+/***/ "./src/js/App.js":
+/*!***********************!*\
+  !*** ./src/js/App.js ***!
+  \***********************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "App": function() { return /* binding */ App; }
+/* harmony export */ });
+/* harmony import */ var _modules_menu__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/menu */ "./src/js/modules/menu.js");
+/* harmony import */ var _modules_TopFilms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/TopFilms */ "./src/js/modules/TopFilms.js");
+/* harmony import */ var _modules_MyListFilms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/MyListFilms */ "./src/js/modules/MyListFilms.js");
+/* harmony import */ var _modules_scroll__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/scroll */ "./src/js/modules/scroll.js");
+
+
+
+
+
+class AppClass {
+    get root() {
+        return document.getElementById('root');
+    }
+    render() {
+        this.root.innerHTML = '';
+
+        const MyList = new _modules_MyListFilms__WEBPACK_IMPORTED_MODULE_2__.MyListComponent();
+        const TopList = new _modules_TopFilms__WEBPACK_IMPORTED_MODULE_1__.TopListComponent();
+
+        this.root.appendChild((0,_modules_menu__WEBPACK_IMPORTED_MODULE_0__["default"])());
+        this.root.appendChild(TopList.render());
+        this.root.appendChild(MyList.render());
+        this.root.appendChild((0,_modules_scroll__WEBPACK_IMPORTED_MODULE_3__["default"])());
+    }
+}
+
+const App = new AppClass();
+
+
+/***/ }),
+
 /***/ "./src/js/FilmServices.js":
 /*!********************************!*\
   !*** ./src/js/FilmServices.js ***!
@@ -17222,8 +17264,8 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "debouncedLoadFilms": function() { return /* binding */ debouncedLoadFilms; },
-/* harmony export */   "topLoadFilms": function() { return /* binding */ topLoadFilms; }
+/* harmony export */   "loadFilms": function() { return /* binding */ loadFilms; },
+/* harmony export */   "debouncedLoadFilms": function() { return /* binding */ debouncedLoadFilms; }
 /* harmony export */ });
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
@@ -17241,13 +17283,12 @@ async function loadFilms(url){
     const resultData = await response.json();
     
     return resultData.films || []; 
-};
+}
 
-const debouncedLoadFilms = (0,lodash__WEBPACK_IMPORTED_MODULE_0__.debounce)((url, onSuccess) => 
-loadFilms(url).then(onSuccess), 500);
+const debouncedLoadFilms = (0,lodash__WEBPACK_IMPORTED_MODULE_0__.debounce)((url, onSuccess) => {
+    return loadFilms(url).then(onSuccess);
+}, 500)
 
-const topLoadFilms = (url, onSuccess) => 
-    loadFilms(url).then(onSuccess);
 
 
 /***/ }),
@@ -17281,12 +17322,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MyListComponent": function() { return /* binding */ MyListComponent; }
 /* harmony export */ });
-/* harmony import */ var _myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./myListFilmsComponents/FilmActions */ "./src/js/modules/myListFilmsComponents/FilmActions.js");
-/* harmony import */ var _myListFilmsComponents_Helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./myListFilmsComponents/Helpers */ "./src/js/modules/myListFilmsComponents/Helpers.js");
-/* harmony import */ var _myListFilmsComponents_SelectInput__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./myListFilmsComponents/SelectInput */ "./src/js/modules/myListFilmsComponents/SelectInput.js");
-/* harmony import */ var _myListFilmsComponents_SelectFilmsField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./myListFilmsComponents/SelectFilmsField */ "./src/js/modules/myListFilmsComponents/SelectFilmsField.js");
-/* harmony import */ var _myListFilmsComponents_DetailsModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./myListFilmsComponents/DetailsModal */ "./src/js/modules/myListFilmsComponents/DetailsModal.js");
-/* harmony import */ var _myListFilmsComponents_FilmsCards__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./myListFilmsComponents/FilmsCards */ "./src/js/modules/myListFilmsComponents/FilmsCards.js");
+/* harmony import */ var _myListFilmsComponents_Helpers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./myListFilmsComponents/Helpers */ "./src/js/modules/myListFilmsComponents/Helpers.js");
+/* harmony import */ var _myListFilmsComponents_SelectInput__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./myListFilmsComponents/SelectInput */ "./src/js/modules/myListFilmsComponents/SelectInput.js");
+/* harmony import */ var _myListFilmsComponents_SelectFilmsField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./myListFilmsComponents/SelectFilmsField */ "./src/js/modules/myListFilmsComponents/SelectFilmsField.js");
+/* harmony import */ var _myListFilmsComponents_DetailsModal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./myListFilmsComponents/DetailsModal */ "./src/js/modules/myListFilmsComponents/DetailsModal.js");
+/* harmony import */ var _myListFilmsComponents_FilmsCards__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./myListFilmsComponents/FilmsCards */ "./src/js/modules/myListFilmsComponents/FilmsCards.js");
+/* harmony import */ var _myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./myListFilmsComponents/FilmActions */ "./src/js/modules/myListFilmsComponents/FilmActions.js");
 
 
 
@@ -17294,35 +17335,25 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-function myList() {
-    _myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_0__["default"].initializeState();      
-
-    const MyListInstance = new MyListComponent();
-
-    MyListInstance.render();
-}
 
 class MyListComponent {
-    moviesContainer = document.querySelector('.my-list__items');
+    get moviesContainer() {
+        return document.querySelector('.my-list__items');
+    }
     
     render() {
-        if (!_myListFilmsComponents_Helpers__WEBPACK_IMPORTED_MODULE_1__["default"].getSelectInput()) {
-            (0,_myListFilmsComponents_SelectInput__WEBPACK_IMPORTED_MODULE_2__["default"])();
+        if (!_myListFilmsComponents_Helpers__WEBPACK_IMPORTED_MODULE_0__["default"].getSelectInput()) {
+            (0,_myListFilmsComponents_SelectInput__WEBPACK_IMPORTED_MODULE_1__["default"])();
         }
-        (0,_myListFilmsComponents_SelectFilmsField__WEBPACK_IMPORTED_MODULE_3__["default"])();
+        (0,_myListFilmsComponents_SelectFilmsField__WEBPACK_IMPORTED_MODULE_2__["default"])();
         this.moviesContainer.innerHTML = '';
-        (0,_myListFilmsComponents_FilmsCards__WEBPACK_IMPORTED_MODULE_5__["default"])();
+        (0,_myListFilmsComponents_FilmsCards__WEBPACK_IMPORTED_MODULE_4__["default"])();
         
-        if (_myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_0__.store.detailsInfo) {
-            (0,_myListFilmsComponents_DetailsModal__WEBPACK_IMPORTED_MODULE_4__["default"])(_myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_0__.store.detailsInfo);
-        };
+        if (_myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_5__.store.detailsInfo) {
+            (0,_myListFilmsComponents_DetailsModal__WEBPACK_IMPORTED_MODULE_3__["default"])(_myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_5__.store.detailsInfo);
+        }
     }
 }
-
-/* harmony default export */ __webpack_exports__["default"] = (myList);
 
 
 /***/ }),
@@ -17335,6 +17366,9 @@ class MyListComponent {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "TopListComponent": function() { return /* binding */ TopListComponent; }
+/* harmony export */ });
 /* harmony import */ var _myListFilmsComponents_Helpers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./myListFilmsComponents/Helpers */ "./src/js/modules/myListFilmsComponents/Helpers.js");
 /* harmony import */ var _myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./myListFilmsComponents/FilmActions */ "./src/js/modules/myListFilmsComponents/FilmActions.js");
 /* harmony import */ var _FilmServices__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../FilmServices */ "./src/js/FilmServices.js");
@@ -17346,22 +17380,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function topList() {
-    const TopListInstance = new TopListComponent();
+const doInitialLoad = () => {
+    if (_myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_1__.store.topFilms.length === 0) {
 
-    (0,_FilmServices__WEBPACK_IMPORTED_MODULE_2__.topLoadFilms)(_Const__WEBPACK_IMPORTED_MODULE_3__.TOP_FILMS_URL, (films) => {
-        _myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_1__["default"].setTopFilms(films);
-        TopListInstance.render();
-    })
+    }
 }
 
 class TopListComponent {
-    topFilmsContainer = document.querySelector('.movies');
-
     createTopFilmsCard(item) {
-            const movie = document.createElement('div');
-            movie.classList.add('movie');
-            movie.innerHTML = `
+        const movie = document.createElement('div');
+        movie.classList.add('movie');
+        movie.innerHTML = `
             <div>
                 <img src="${item.posterUrl}" alt="${item.nameEn}">
                 <div class="movie__name movie__nameEn">${item.nameEn ? item.nameEn : ''}</div>
@@ -17370,21 +17399,27 @@ class TopListComponent {
                 <div class="movie__rating movie__rating_${_myListFilmsComponents_Helpers__WEBPACK_IMPORTED_MODULE_0__["default"].getRatingColor(item.rating)}">${_myListFilmsComponents_Helpers__WEBPACK_IMPORTED_MODULE_0__["default"].getRating(item.rating)}</div>
             </div>
             `;
-            return movie;
-    }
-
-    createTopFilmsCards() {
-        _myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_1__.store.topFilms.forEach((filmData) => {
-            this.topFilmsContainer.appendChild(this.createTopFilmsCard(filmData));
-        })
+        return movie;
     }
 
     render() {
-        this.createTopFilmsCards()
+        const topListElement = document.createElement('div');
+
+        topListElement.classList.add('movies');
+
+        if (_myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_1__.store.topFilms.length) {
+            const filmCards = _myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_1__.store.topFilms.map(this.createTopFilmsCard);
+
+            topListElement.append(...filmCards);
+        } else {
+            (0,_FilmServices__WEBPACK_IMPORTED_MODULE_2__.loadFilms)(_Const__WEBPACK_IMPORTED_MODULE_3__.TOP_FILMS_URL).then(films => {
+                _myListFilmsComponents_FilmActions__WEBPACK_IMPORTED_MODULE_1__["default"].setTopFilms(films);
+            })
+        }
+
+        return topListElement;
     }
 }
-
-/* harmony default export */ __webpack_exports__["default"] = (topList);
 
 
 /***/ }),
@@ -17516,6 +17551,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "store": function() { return /* binding */ store; }
 /* harmony export */ });
 /* harmony import */ var _MyListFilms__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../MyListFilms */ "./src/js/modules/MyListFilms.js");
+/* harmony import */ var _App__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../App */ "./src/js/App.js");
+
 
 
 const store = {
@@ -17531,41 +17568,50 @@ const MyListInstance = new _MyListFilms__WEBPACK_IMPORTED_MODULE_0__.MyListCompo
 class FilmActions {
     static initializeState() {
         store.moviesStorage = JSON.parse(localStorage.getItem('movies')) || [];
+        _App__WEBPACK_IMPORTED_MODULE_1__.App.render();
     }
     static addFilm(filmData) {
         store.moviesStorage.push(filmData);
         store.selectFilmInputValue = null;
         localStorage.setItem('movies', JSON.stringify(store.moviesStorage));
+        _App__WEBPACK_IMPORTED_MODULE_1__.App.render();
     }
     static removeFilm(filmId) {
         const filteredFilms = store.moviesStorage.filter((item) => item.filmId !== filmId);
         store.moviesStorage = filteredFilms;
         store.loadedFilms = [];
         localStorage.setItem('movies', JSON.stringify(filteredFilms));
-        MyListInstance.render();
+        _App__WEBPACK_IMPORTED_MODULE_1__.App.render();
     }
     static addSelectFilms(films) {
         store.loadedFilms = films;
+        _App__WEBPACK_IMPORTED_MODULE_1__.App.render();
     }
     static addDetailsModal(filmData) {
         store.detailsInfo = filmData;
         store.loadedFilms = [];
+        _App__WEBPACK_IMPORTED_MODULE_1__.App.render();
     }
     static deleteDetailsModal() {
         store.detailsInfo = null;
+        _App__WEBPACK_IMPORTED_MODULE_1__.App.render();
     }
     static selectFilmInputValue(selectItem) {
         store.selectFilmInputValue = selectItem.value;
+        _App__WEBPACK_IMPORTED_MODULE_1__.App.render();
     }
     static setLoadedFilms(films) {
         store.loadedFilms = films;
+        _App__WEBPACK_IMPORTED_MODULE_1__.App.render();
     }
     static closeSelectFilms() {
         store.selectFilmInputValue = null;
         store.loadedFilms = [];
+        _App__WEBPACK_IMPORTED_MODULE_1__.App.render();
     }
     static setTopFilms(films) {
         store.topFilms = films;
+        _App__WEBPACK_IMPORTED_MODULE_1__.App.render();
     }
 }
 
@@ -17955,20 +18001,11 @@ var __webpack_exports__ = {};
   !*** ./src/js/script.js ***!
   \**************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _modules_menu__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/menu */ "./src/js/modules/menu.js");
-/* harmony import */ var _modules_TopFilms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/TopFilms */ "./src/js/modules/TopFilms.js");
-/* harmony import */ var _modules_MyListFilms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/MyListFilms */ "./src/js/modules/MyListFilms.js");
-/* harmony import */ var _modules_scroll__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/scroll */ "./src/js/modules/scroll.js");
+/* harmony import */ var _App__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./App */ "./src/js/App.js");
 
 
+_App__WEBPACK_IMPORTED_MODULE_0__.App.render();
 
-
-
-    (0,_modules_menu__WEBPACK_IMPORTED_MODULE_0__["default"])();
-    (0,_modules_TopFilms__WEBPACK_IMPORTED_MODULE_1__["default"])();
-    (0,_modules_MyListFilms__WEBPACK_IMPORTED_MODULE_2__["default"])();
-    (0,_modules_scroll__WEBPACK_IMPORTED_MODULE_3__["default"])();
-    
 }();
 /******/ })()
 ;
