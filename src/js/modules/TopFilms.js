@@ -4,14 +4,7 @@ import {loadFilms} from "../FilmServices";
 import {store} from "./myListFilmsComponents/FilmActions";
 import {TOP_FILMS_URL} from "./Const";
 
-
-const doInitialLoad = () => {
-    if (store.topFilms?.length === 0) {
-
-    }
-}
-
-export class TopListComponent {
+export class TopList {
     createTopFilmsCard(item) {
         const movie = document.createElement('div');
         movie.classList.add('movie');

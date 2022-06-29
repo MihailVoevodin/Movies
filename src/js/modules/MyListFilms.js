@@ -6,7 +6,7 @@ import FilmsCards from "./myListFilmsComponents/FilmsCards";
 import { store } from "./myListFilmsComponents/FilmActions";
 
 
-export class MyListComponent {
+export class MyList {
     get moviesContainer() {
         return document.querySelector('.my-list__items');
     }
@@ -22,5 +22,13 @@ export class MyListComponent {
         if (store.detailsInfo) {
             DetailsModal(store.detailsInfo);
         }
+
+        // Внутри этой функции должен быть создан div элемент внутрь которого ты уже будешь аппендить элемент который возвращется от
+        /**
+         * SelectInput.render()
+         * SelectFilmsField.render()
+         * FilmsCards.render()
+         * DetailsModal.render()
+         */
     }
 }

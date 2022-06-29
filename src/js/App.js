@@ -1,6 +1,6 @@
 import menu from './modules/menu';
-import {TopListComponent} from './modules/TopFilms';
-import {MyListComponent} from './modules/MyListFilms';
+import {TopList} from './modules/TopFilms';
+import {MyList} from './modules/MyListFilms';
 import scroll from './modules/scroll';
 
 class AppClass {
@@ -10,12 +10,12 @@ class AppClass {
     render() {
         this.root.innerHTML = '';
 
-        const MyList = new MyListComponent();
-        const TopList = new TopListComponent();
+        const MyListComponent = new MyList();
+        const TopListComponent = new TopList();
 
         this.root.appendChild(menu());
-        this.root.appendChild(TopList.render());
-        this.root.appendChild(MyList.render());
+        this.root.appendChild(TopListComponent.render());
+        this.root.appendChild(MyListComponent.render());
         this.root.appendChild(scroll());
     }
 }
