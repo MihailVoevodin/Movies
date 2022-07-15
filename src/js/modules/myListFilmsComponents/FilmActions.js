@@ -1,4 +1,5 @@
-import { MyListComponent } from "../MyListFilms";
+import { App } from "../../App";
+import {DetailsModalComponent} from "./DetailsModal";
 
 export const store = {
     moviesStorage: [], //массив с добавленными фильмами через селект
@@ -8,30 +9,33 @@ export const store = {
     topFilms: [] //массив с загруженным топом фильмов
 }
 
-const MyListInstance = new MyListComponent(); //перенес сюда
-
 class FilmActions {
     static initializeState() {
         store.moviesStorage = JSON.parse(localStorage.getItem('movies')) || [];
+        App.render();
     }
     static addFilm(filmData) {
         store.moviesStorage.push(filmData);
         store.selectFilmInputValue = null;
         localStorage.setItem('movies', JSON.stringify(store.moviesStorage));
+        App.render();
     }
     static removeFilm(filmId) {
         const filteredFilms = store.moviesStorage.filter((item) => item.filmId !== filmId);
         store.moviesStorage = filteredFilms;
         store.loadedFilms = [];
         localStorage.setItem('movies', JSON.stringify(filteredFilms));
-        MyListInstance.render();
+        App.render();
     }
     static addSelectFilms(films) {
         store.loadedFilms = films;
+        App.render();
     }
     static addDetailsModal(filmData) {
         store.detailsInfo = filmData;
         store.loadedFilms = [];
+        const DetailsModalElement = new DetailsModalComponent()
+        DetailsModalElement.render();
     }
     static deleteDetailsModal() {
         store.detailsInfo = null;
@@ -45,9 +49,11 @@ class FilmActions {
     static closeSelectFilms() {
         store.selectFilmInputValue = null;
         store.loadedFilms = [];
+        App.render();
     }
     static setTopFilms(films) {
         store.topFilms = films;
+        App.render();
     }
 }
 

@@ -1,10 +1,6 @@
-import menu from './modules/menu';
-import topList from './modules/TopFilms';
-import MyList from './modules/MyListFilms';
-import scroll from './modules/scroll';
+import { App } from "./App";
+import FilmActions from "./modules/MyListFilmsComponents/FilmActions";
 
-    menu();
-    topList();
-    MyList();
-    scroll();
+FilmActions.initializeState();
+App.render();
     

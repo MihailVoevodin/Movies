@@ -1,36 +1,46 @@
-import FilmActions from "./myListFilmsComponents/FilmActions";
-import Helpers from "./myListFilmsComponents/Helpers";
-import SelectInput from "./myListFilmsComponents/SelectInput";
-import SelectFilmsField from "./myListFilmsComponents/SelectFilmsField";
-import DetailsModal from "./myListFilmsComponents/DetailsModal";
-import FilmsCards from "./myListFilmsComponents/FilmsCards";
-import { store } from "./myListFilmsComponents/FilmActions";
-
-
-
-function myList() {
-    FilmActions.initializeState();      
-
-    const MyListInstance = new MyListComponent();
-
-    MyListInstance.render();
-}
+import {SelectInput} from "./MyListFilmsComponents/SelectInput";
+import {FilmsCards} from "./MyListFilmsComponents/FilmsCards";
 
 export class MyListComponent {
-    moviesContainer = document.querySelector('.my-list__items');
     
     render() {
-        if (!Helpers.getSelectInput()) {
-            SelectInput();
-        }
-        SelectFilmsField();
-        this.moviesContainer.innerHTML = '';
-        FilmsCards();
-        
-        if (store.detailsInfo) {
-            DetailsModal(store.detailsInfo);
-        };
-    }
-}
+        const myListElement = document.createElement('div');
 
-export default myList;
+        myListElement.setAttribute('id', 'my-films');
+        myListElement.classList.add('my-list');
+        myListElement.innerHTML = `
+            <div class="container">
+                <div class="my-list__title title">My films</div>
+                <div class="select">
+
+                </div>
+            </div>
+        `;
+
+        const selectContainer = myListElement.querySelector('.select');
+        const moviesContainer = myListElement.querySelector('.container');
+
+        const SelectInputEl = new SelectInput();
+        const FilmsCardsEl = new FilmsCards();
+
+        selectContainer.appendChild(SelectInputEl.render());
+        moviesContainer.appendChild(FilmsCardsEl.render());
+
+        return myListElement;
+    }
+
+    // moviesContainer = document.querySelector('.my-list__items');
+    
+    // render() {
+    //     if (!Helpers.getSelectInput()) {
+    //         SelectInput();
+    //     }
+    //     SelectFilmsField();
+    //     this.moviesContainer.innerHTML = '';
+    //     FilmsCards();
+        
+    //     if (store.detailsInfo) {
+    //         DetailsModal(store.detailsInfo);
+    //     };
+    // }
+}

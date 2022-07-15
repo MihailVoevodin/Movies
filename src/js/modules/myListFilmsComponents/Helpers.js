@@ -29,6 +29,9 @@ class Helpers {
     static getSelectInput() {
         return document.querySelector('.film');
     }
+    static getModalContainer() {
+        return document.querySelector('.modal__container');
+    }
 }
 
 export default Helpers;

@@ -2,14 +2,13 @@ import { some } from "lodash";
 import { store } from "./FilmActions";
 import FilmActions from "./FilmActions";
 import Helpers from "./Helpers";
-import { MyListComponent } from '../MyListFilms';
 
 function SelectFilm(filmData) {
-    const MyListInstance = new MyListComponent();
 
     const listFilms = Helpers.getSelectList();
     const selectItem = Helpers.getSelectInput();
     const inputClose = Helpers.getSelectClose();
+
     const film = document.createElement('li');
     film.classList.add('film-item')
 
@@ -22,7 +21,6 @@ function SelectFilm(filmData) {
     film.addEventListener('click', () => {
         FilmActions.addFilm(filmData);
         closeSelectFilmsField(listFilms, inputClose, selectItem);
-        MyListInstance.render();
     });
 
     if (selectItem.value != '') {
