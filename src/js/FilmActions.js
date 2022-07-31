@@ -1,5 +1,5 @@
-import { App } from "../../App";
-import {DetailsModalComponent} from "./DetailsModal";
+import { App } from "./App";
+import {DetailsModalComponent} from "./modules/MyListFilmsComponents/DetailsModal";
 
 export const store = {
     moviesStorage: [], //массив с добавленными фильмами через селект
@@ -41,7 +41,7 @@ class FilmActions {
         store.detailsInfo = null;
     }
     static selectFilmInputValue(selectItem) {
-        store.selectFilmInputValue = selectItem.value;
+        store.selectFilmInputValue = selectItem;
     }
     static setLoadedFilms(films) {
         store.loadedFilms = films;
@@ -49,7 +49,6 @@ class FilmActions {
     static closeSelectFilms() {
         store.selectFilmInputValue = null;
         store.loadedFilms = [];
-        App.render();
     }
     static setTopFilms(films) {
         store.topFilms = films;

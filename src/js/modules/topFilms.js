@@ -1,8 +1,8 @@
-import Helpers from "./MyListFilmsComponents/Helpers";
-import FilmActions from "./MyListFilmsComponents/FilmActions";
+import Helpers from "../Helpers";
+import FilmActions from "../FilmActions";
 import { loadFilms } from "../FilmServices";
-import { store } from "./MyListFilmsComponents/FilmActions";
-import { TOP_FILMS_URL } from "./Const";
+import { store } from "../FilmActions";
+import { TOP_FILMS_URL } from "../Const";
 
 export class TopListComponent {
     

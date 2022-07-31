@@ -120,7 +120,7 @@
 
 @media (min-width: 481px) {
     .hamburger-menu {
-        display: none;
+        // display: block;
     }
 }
 
@@ -135,12 +135,12 @@
         }
     }            
     .hamburger-menu {
-        display: block;
+        // display: block;
     }
     .hamburger {
-        display: block;
+        // display: block;
     }
     .menu {
-        display: none;
+        // display: none;
     }
 }

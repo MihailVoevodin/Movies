@@ -1,9 +1,8 @@
 import { debouncedLoadFilms } from '../../FilmServices';
-import { store } from "./FilmActions";
-import FilmActions from './FilmActions';
-import { MY_FILM_URL } from '../Const';
+import { store } from '../../FilmActions';
+import FilmActions from '../../FilmActions';
+import { MY_FILM_URL } from '../../Const';
 import SelectFilmsField from './SelectFilmsField';
-
 
 export class SelectInput {
     
@@ -30,7 +29,8 @@ export class SelectInput {
         const selectItem = selectInputField.querySelector('.film');
     
         selectItem.addEventListener('keyup', () => {
-            FilmActions.selectFilmInputValue(selectItem);
+            FilmActions.selectFilmInputValue(selectItem.value);
+            console.log(selectItem.value)
             const  apiUrl = `${MY_FILM_URL}${store.selectFilmInputValue}`;
                   
             listFilms.innerHTML = '';
@@ -44,5 +44,4 @@ export class SelectInput {
     
         return selectInputField;
     }
-
 }

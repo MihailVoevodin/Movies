@@ -1,6 +1,6 @@
-import FilmActions from "./FilmActions";
-import Helpers from "./Helpers";
-import { store } from "./FilmActions";
+import FilmActions from '../../FilmActions';
+import Helpers from "../../Helpers";
+import { store } from '../../FilmActions';
 
 export class DetailsModalComponent {
 
@@ -33,7 +33,7 @@ export class DetailsModalComponent {
                 </svg></div>
             </div>
         `
-    
+        
         modalContainer.addEventListener('click', (e) => {
             if (e.target === modalContainer) {
                 this.handleDeleteModalClick(modal);

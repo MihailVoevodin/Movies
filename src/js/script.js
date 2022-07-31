@@ -1,5 +1,5 @@
 import { App } from "./App";
-import FilmActions from "./modules/MyListFilmsComponents/FilmActions";
+import FilmActions from "./FilmActions";
 
 FilmActions.initializeState();
 App.render();

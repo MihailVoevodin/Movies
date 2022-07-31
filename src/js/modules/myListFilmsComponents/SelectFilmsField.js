@@ -1,7 +1,7 @@
-import { some } from "lodash";
-import { store } from "./FilmActions";
-import FilmActions from "./FilmActions";
-import Helpers from "./Helpers";
+import { some } from 'lodash';
+import { store } from '../../FilmActions';
+import FilmActions from '../../FilmActions';
+import Helpers from '../../Helpers';
 
 function SelectFilm(filmData) {
 

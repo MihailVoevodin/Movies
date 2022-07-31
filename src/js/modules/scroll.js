@@ -1,14 +1,16 @@
+const showScrollOffsetPixels = '1000';
+
 export class ScrollComponent {
 
     showScrollBtn(scrollElement) {
-        if (window.pageYOffset >= '1000') {
+        if (window.pageYOffset >= showScrollOffsetPixels) {
             scrollElement.style.display = 'block';
         } else {
             scrollElement.style.display = 'none';
         }
     };
 
-    scrollToTop() {
+    handleScrollToTop() {
         window.scrollTo(0, 0);
     };
 
@@ -29,7 +31,7 @@ export class ScrollComponent {
         `;
 
         window.addEventListener('scroll', () => this.showScrollBtn(scrollElement));
-        scrollElement.addEventListener('click', () => this.scrollToTop());
+        scrollElement.addEventListener('click', () => this.handleScrollToTop());
 
         return scrollElement;
     }

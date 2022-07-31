@@ -3,6 +3,7 @@
     left: 0;
     right: 0;
     z-index: 10;
+    background-color: #b00;
     &_wrapper {
         display: flex;
         justify-content: space-between;
@@ -26,7 +27,7 @@
 }
 
 .hamburger  {
-    display: none;
+    display: block;
     cursor: pointer;
     span {
         display: block;

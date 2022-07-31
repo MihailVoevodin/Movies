@@ -9,7 +9,7 @@ export class MyListComponent {
         myListElement.setAttribute('id', 'my-films');
         myListElement.classList.add('my-list');
         myListElement.innerHTML = `
-            <div class="container">
+            <div class="container my-movies">
                 <div class="my-list__title title">My films</div>
                 <div class="select">
 
@@ -18,7 +18,7 @@ export class MyListComponent {
         `;
 
         const selectContainer = myListElement.querySelector('.select');
-        const moviesContainer = myListElement.querySelector('.container');
+        const moviesContainer = myListElement.querySelector('.my-movies');
 
         const SelectInputEl = new SelectInput();
         const FilmsCardsEl = new FilmsCards();
@@ -28,19 +28,4 @@ export class MyListComponent {
 
         return myListElement;
     }
-
-    // moviesContainer = document.querySelector('.my-list__items');
-    
-    // render() {
-    //     if (!Helpers.getSelectInput()) {
-    //         SelectInput();
-    //     }
-    //     SelectFilmsField();
-    //     this.moviesContainer.innerHTML = '';
-    //     FilmsCards();
-        
-    //     if (store.detailsInfo) {
-    //         DetailsModal(store.detailsInfo);
-    //     };
-    // }
 }

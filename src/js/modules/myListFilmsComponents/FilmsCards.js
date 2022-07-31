@@ -1,11 +1,10 @@
-import { store } from "./FilmActions";
-import FilmActions from "./FilmActions";
-import Helpers from "./Helpers";
-
+import { store } from '../../FilmActions';
+import FilmActions from'../../FilmActions';
+import Helpers from '../../Helpers';
 
 export class FilmsCards {
 
-    FilmCard(filmData) {
+    renderMyFilmCard(filmData) {
     
         const movie = document.createElement('li');
         movie.setAttribute('filmId', filmData.filmId);
@@ -34,7 +33,7 @@ export class FilmsCards {
         const moviesContainer = document.createElement('ul');
         moviesContainer.classList.add('my-list__items');
         console.log(store.moviesStorage);
-        const filmCards = store.moviesStorage.map(this.FilmCard);
+        const filmCards = store.moviesStorage.map(this.renderMyFilmCard);
 
         moviesContainer.append(...filmCards);
 
