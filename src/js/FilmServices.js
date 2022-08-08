@@ -1,8 +1,8 @@
 import { debounce } from "lodash";
 
 const API_KEY = 'ba2becc0-f421-4ef5-bf44-ebac95a88660';
- 
-async function loadFilms(url){
+
+export async function loadFilms(url){
     const headers = {
         'Content-type': 'application/json',
         'X-API-KEY': API_KEY,

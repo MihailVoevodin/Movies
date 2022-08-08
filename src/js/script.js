@@ -1,9 +1,6 @@
-import menu from './modules/menu';
-import topFilms from './modules/topFilms';
-import select from './modules/select';
-import scroll from './modules/scroll';
+import { App } from "./App";
+import FilmActions from "./FilmActions";
 
-    menu();
-    topFilms();
-    select();
-    scroll();
+FilmActions.initializeState();
+App.render();
+    

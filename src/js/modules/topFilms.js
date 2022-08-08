@@ -1,60 +1,49 @@
-function topFilms() {
-    const _apiKey = 'ba2becc0-f421-4ef5-bf44-ebac95a88660',
-      apiUrlPopular = 'https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_100_POPULAR_FILMS&page=1';
-      
+import Helpers from "../Helpers";
+import FilmActions from "../FilmActions";
+import { loadFilms } from "../FilmServices";
+import { store } from "../FilmActions";
+import { TOP_FILMS_URL } from "../Const";
 
-    getPopularFilms(apiUrlPopular)
-
-    async function getPopularFilms(url) {
-        const res = await fetch(url, {
-            headers: {
-                'Content-type': 'application/json',
-                'X-API-KEY': _apiKey,
-            },
-        })
-
-        const resData = await res.json();
-        createCards(resData)
+export class TopListComponent {
+    
+    createTopFilmsCard(item) {
+        const movie = document.createElement('div');
+        movie.classList.add('movie');
+        movie.innerHTML = `
+        <div>
+            <img src="${item.posterUrl}" alt="${item.nameEn}">
+            <div class="movie__name movie__nameEn">${item.nameEn ? item.nameEn : ''}</div>
+            <div class="movie__name movie__nameRu">${item.nameEn ? '( ' + item.nameRu + ' )' : item.nameRu}</div>
+            <div class="movie__genres">${item.genres.slice(0, 3).map(genre => ` ${genre.genre}`)}</div>
+            <div class="movie__rating movie__rating_${Helpers.getRatingColor(item.rating)}">${Helpers.getRating(item.rating)}</div>
+        </div>
+        `;
+        return movie;
     }
 
-    function createCards(card) {
-        const movies = document.querySelector('.movies');
+    render() {
+        const topListElement = document.createElement('div');
 
-        card.films.forEach(item => {
-            const movie = document.createElement('div')
-            movie.classList.add('movie')
-            movie.innerHTML = `
-            <div>
-                <img src="${item.posterUrl}" alt="${item.nameEn}">
-                <div class="movie__name movie__nameEn">${item.nameEn ? item.nameEn : ''}</div>
-                <div class="movie__name movie__nameRu">${item.nameEn ? '( ' + item.nameRu + ' )' : item.nameRu}</div>
-                <div class="movie__genres">${item.genres.slice(0, 3).map(genre => ` ${genre.genre}`)}</div>
-                <div class="movie__rating movie__rating_${getRatingColor(item.rating)}">${getRating(item.rating)}</div>
+        topListElement.setAttribute('id', 'top-films');
+        topListElement.classList.add('top-films');
+        topListElement.innerHTML = `
+            <div class="container">
+                <div class="top-films__title title">Top films</div>
+                <div class="movies"></div>
             </div>
-            `
-            movies.appendChild(movie)
-        })
+        `;
 
-    }
+        const topListContainer = topListElement.querySelector('.movies');
 
-
-    function getRatingColor(rate) {
-        if (rate >= '7') {
-            return 'green';
-        } else if (rate > '5') {
-            return 'orange';
+        if (store.topFilms.length) {
+            const filmCards = store.topFilms.map(this.createTopFilmsCard);
+            topListContainer.append(...filmCards);
         } else {
-            return 'red';
+            loadFilms(TOP_FILMS_URL).then(films => {
+                FilmActions.setTopFilms(films);
+            });
         }
-    }
 
-    function getRating(rate) {
-        if (rate.includes('%')) {
-            return [rate.substr(0, 1), rate.substr(1, 1)].join('.')
-        } else {
-            return rate
-        }
+        return topListElement; 
     }
 }
-
-export default topFilms;
