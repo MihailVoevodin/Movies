@@ -32,6 +32,9 @@ class Helpers {
     static getModalContainer() {
         return document.querySelector('.modal__container');
     }
+    static getMyFilmsContainer() {
+        return document.querySelector('.my-list__items');
+    }
 }
 
 export default Helpers;

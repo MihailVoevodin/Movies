@@ -1,9 +1,9 @@
-const showScrollOffsetPixels = '1000';
+const SHOW_SCROLL_OFFSET_PIXELS = '1000';
 
 export class ScrollComponent {
 
     showScrollBtn(scrollElement) {
-        if (window.pageYOffset >= showScrollOffsetPixels) {
+        if (window.pageYOffset >= SHOW_SCROLL_OFFSET_PIXELS) {
             scrollElement.style.display = 'block';
         } else {
             scrollElement.style.display = 'none';
@@ -13,8 +13,6 @@ export class ScrollComponent {
     handleScrollToTop() {
         window.scrollTo(0, 0);
     };
-
-
 
     render() {
         const scrollElement = document.createElement('div');

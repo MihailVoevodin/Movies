@@ -1,5 +1,7 @@
 import { App } from "./App";
 import {DetailsModalComponent} from "./modules/MyListFilmsComponents/DetailsModal";
+import { FilmCard } from "./modules/MyListFilmsComponents/FilmCard";
+import { FilmsCards } from "./modules/MyListFilmsComponents/FilmsCards";
 
 export const store = {
     moviesStorage: [], //массив с добавленными фильмами через селект
@@ -18,14 +20,16 @@ class FilmActions {
         store.moviesStorage.push(filmData);
         store.selectFilmInputValue = null;
         localStorage.setItem('movies', JSON.stringify(store.moviesStorage));
-        App.render();
+        const FilmCardElement = new FilmCard();
+        FilmCardElement.render();
     }
     static removeFilm(filmId) {
         const filteredFilms = store.moviesStorage.filter((item) => item.filmId !== filmId);
         store.moviesStorage = filteredFilms;
         store.loadedFilms = [];
         localStorage.setItem('movies', JSON.stringify(filteredFilms));
-        App.render();
+        const FilmsCardsComponent = new FilmsCards();
+        FilmsCardsComponent.render();
     }
     static addSelectFilms(films) {
         store.loadedFilms = films;

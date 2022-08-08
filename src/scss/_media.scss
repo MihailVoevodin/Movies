@@ -118,12 +118,6 @@
     }
 }
 
-@media (min-width: 481px) {
-    .hamburger-menu {
-        // display: block;
-    }
-}
-
 @media (max-width: 480px) {
     .header {
         &__content {
@@ -134,13 +128,4 @@
             line-height: 50px;
         }
     }            
-    .hamburger-menu {
-        // display: block;
-    }
-    .hamburger {
-        // display: block;
-    }
-    .menu {
-        // display: none;
-    }
 }
