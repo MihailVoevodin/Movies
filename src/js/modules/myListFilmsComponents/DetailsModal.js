@@ -50,7 +50,6 @@ export class DetailsModalComponent {
     render() {
         const modalContainer = Helpers.getModalContainer();
         const modalCard = this.DetailsModal(store.detailsInfo);
-        console.log(modalCard);
         modalContainer.style.display = 'block';
         document.body.style.overflow = 'hidden';
         modalContainer.appendChild(modalCard);

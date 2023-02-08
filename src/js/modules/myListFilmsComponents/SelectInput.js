@@ -30,14 +30,12 @@ export class SelectInput {
     
         selectItem.addEventListener('keyup', () => {
             FilmActions.selectFilmInputValue(selectItem.value);
-            console.log(selectItem.value)
             const  apiUrl = `${MY_FILM_URL}${store.selectFilmInputValue}`;
                   
             listFilms.innerHTML = '';
     
             debouncedLoadFilms(apiUrl, (films) => {
                 FilmActions.setLoadedFilms(films);
-                console.log(store.loadedFilms);
                 SelectFilmsField();
             });
         });   

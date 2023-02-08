@@ -23,7 +23,7 @@ function SelectFilm(filmData) {
         closeSelectFilmsField(listFilms, inputClose, selectItem);
     });
 
-    if (selectItem.value != '') {
+    if (selectItem.value !== '') {
         inputClose.style.display = 'block';
     }
 
@@ -38,17 +38,18 @@ function SelectFilm(filmData) {
 function SelectFilmsField() {
     const filmsForSelect = store.loadedFilms.filter((item) => {
         return !some(store.moviesStorage, {filmId: item.filmId})
-    })
+    }).slice(0, 6);
+
     filmsForSelect.forEach((film) => {
         SelectFilm(film);
     });
-};
+}
 
 function closeSelectFilmsField(listFilms, inputClose, selectItem) {
     FilmActions.closeSelectFilms();
     inputClose.style.display = 'none';
     listFilms.innerHTML = '';
     selectItem.value = '';
-};
+}
 
 export default SelectFilmsField;
