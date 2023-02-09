@@ -26,4 +26,4 @@
 
 ### `gulp`
 
-Либо запустить на [сайте](https://www.mikhailvoevodin.ru/movies/index.html).
+Либо открыть на [сайте](https://www.mikhailvoevodin.ru/movies/index.html).
