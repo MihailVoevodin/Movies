@@ -13,7 +13,7 @@ class Helpers {
     }
 
     static getRating(rate) {
-        if (rate.includes('%')) {
+        if (rate && rate.includes('%')) {
             return [rate.substr(0, 1), rate.substr(1, 1)].join('.')
         } else {
             return rate

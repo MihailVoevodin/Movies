@@ -1,8 +1,8 @@
-import {MenuComponent} from './modules/Menu';
+import {MenuComponent} from './modules/menu';
 import {HeaderComponent} from './modules/Header'
-import {TopListComponent} from './modules/TopFilms';
-import {MyListComponent} from './modules/MyListFilms';
-import {ScrollComponent} from './modules/Scroll';
+import {TopListComponent} from './modules/topFilms';
+import {MyListComponent} from './modules/myListFilms';
+import {ScrollComponent} from './modules/scroll';
 
 class AppClass {
     get root() {
